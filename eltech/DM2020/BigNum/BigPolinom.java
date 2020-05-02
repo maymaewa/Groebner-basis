@@ -20,8 +20,8 @@ public class BigPolinom
 	*
 	* @param String src - представление полинома в виде строки
 	*
-	* @version 2
-	* @author Семенов Алексей
+	* @version 1
+	* @author 
 	*/
 	public BigPolinom(int amount, String src)
 	{
@@ -39,11 +39,14 @@ public class BigPolinom
 		src = src.replace("++", "+");
 		src = src.replace("/+", "/");
 		src = src.replace("_", "");
+		if(src.indexOf("+") == 0)
+			src = src.substring(1,src.length());
 		str = src.split("[+]");
 		for(i = 0; i < str.length; i++)
-			if(!str[i].equals(""))
-				factors.add(new BigMonom(amount, str[i].trim()));
-		//сортировка
+		{
+			factors.add(new BigMonom(amount, str[i].trim()));
+		}
+		factors = this.sort();
 	}
 
 	/**
@@ -62,9 +65,9 @@ public class BigPolinom
 		int i;
 		String buffS = "";
 		for(i = 0; i < factors.size(); i++)
-			buffS += factors.get(i).toString()+"+";
-		buffS = buffS.replace("+-", "-");
-		return buffS.substring(0, buffS.length() - 1);
+			buffS += factors.get(i).toString()+" + ";
+		buffS = buffS.replace("+ -", "- ");
+		return buffS.substring(0, buffS.length() - 3);
 	}
 
 	/**
@@ -77,7 +80,7 @@ public class BigPolinom
 	*/
 	public boolean isZero()
 	{
-        return true;
+        return this.factors.get(factors.size()-1).isZero();
 	}
 
     /**
@@ -91,8 +94,7 @@ public class BigPolinom
     */
     public int compareTo(BigPolinom other)
     {
-		BigPolinom result = new BigPolinom();
-        return 1;
+		return this.factors.get(0).compareTo( other.factors.get(0) );
     }
 
 	/**
@@ -106,7 +108,11 @@ public class BigPolinom
 	@Override
 	public BigPolinom clone()
 	{
+		int i,n;
 		BigPolinom result = new BigPolinom();
+		n = this.factors.size();
+		for(i = 0; i < n; i++)
+			result.factors.add(this.factors.get(i).clone());
 		return result;
 	}
 
@@ -117,7 +123,7 @@ public class BigPolinom
 	*
     * @return BigPolinom result - результат сложения
     *
-    * @version 
+    * @version 1
     * @author 
     */
 	public BigPolinom add(BigPolinom other)
@@ -134,7 +140,7 @@ public class BigPolinom
     * @return BigPolinom result - результат вычитания
     *
     * @version 1
-    * @author Яловега Никита
+    * @author 
     */
 	public BigPolinom subtract(BigPolinom other)
 	{
@@ -150,11 +156,66 @@ public class BigPolinom
     * @return BigPolinom result - результат вычитания
     *
     * @version 1
-    * @author Яловега Никита
+    * @author 
     */
 	public BigPolinom multiply(BigPolinom other)
 	{
         BigPolinom result = new BigPolinom();
         return result;
+	}
+	
+	/**
+    * Проверка, есть ли моном в полиноме
+	*
+	* @param BigMonom other - моном, который мы ищем
+	*
+    * @return true - если есть, иначе false
+    *
+    * @version 1
+    * @author 
+    */
+	public boolean hasMonom(BigMonom other)
+	{
+		int i;
+		if(this.isZero() || other.isZero())
+			return false;
+		for(i = 0; i < this.factors.size(); i++)
+			if(this.factors.get(i).getPowers().equals(other.getPowers()))
+				return true;
+		return false;
+	}
+	
+	/**
+    * Сортировка полинома
+	*
+    * @return Отсортированный полином
+    *
+    * @version 1
+    * @author 
+    */
+	private ArrayList<BigMonom> sort()
+	{
+		int i;
+		BigPolinom buffThis = this.clone();
+		BigPolinom result = new BigPolinom();
+		BigMonom buffMonom;
+		while(buffThis.factors.size() > 0)
+		{
+			buffMonom = buffThis.factors.get(0);
+			for(i = 1; i < buffThis.factors.size(); i++)
+			{
+				//System.out.println( buffMonom.compareTo( buffThis.factors.get(i) ));
+				if(buffMonom.compareTo( buffThis.factors.get(i) ) < 0)
+					buffMonom = buffThis.factors.get(i);
+			}
+			result.factors.add(buffMonom);
+			buffThis.factors.remove(buffThis.factors.indexOf(buffMonom));
+		}
+		return result.factors;
+	}
+	
+	public ArrayList<BigMonom> getFactors()
+	{
+		return factors;
 	}
 }

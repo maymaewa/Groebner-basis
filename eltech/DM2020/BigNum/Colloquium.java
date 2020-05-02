@@ -15,18 +15,34 @@ import java.io.FileInputStream;
 */
 public class Colloquium
 {
-	private static HashMap<String, Object> nums = new HashMap<String, Object>();
-	private static Scanner in = new Scanner(System.in);
-	private static final String SintaxisProblem = "Неверный синтаксис комманды (попробуйте ввести help)";
-	private static final String NotBigNumInDictProblem = " нет в списке чисел (попробуйте использовать input as)";
-	private static final String DifTypeProblem = " должны быть одного типа (попробуйте использовать toBig[N, Z, Q, Polinom])";
+	private static ArrayList<BigPolinom> value = new ArrayList<BigPolinom>();
 	
 	public static void start()
 	{
+		Scanner in = new Scanner(System.in);
+		System.out.println("\nВведите кол-во незвестных и полином через пробел");
 		String buffS;
 		int amount = in.nextInt();
 		buffS = in.nextLine();
-		BigPolinom a = new BigPolinom(amount, buffS.trim());
+		BigPolinom a = new BigPolinom(amount, buffS);
 		System.out.println(a);
+		System.out.println("Полином = 0? " + a.isZero());
+		
+		/*int i;
+		for(i = 0; i < 1; i++)
+		{
+			Scanner in = new Scanner(System.in);
+			System.out.println("\nВведите кол-во незвестных и полином через пробел");
+			String buffS;
+			int amount = in.nextInt();
+			buffS = in.nextLine();
+			value.add( new BigPolinom(amount, buffS.trim()) );
+			System.out.println("Введенный полином: " + value.get(i));
+			System.out.println("Полином = 0? " + value.get(i).isZero() + "\n\n");
+		}
+		/*System.out.println("Есть ли в a первый моном из b: " + value.get(0).hasMonom(value.get(1).getFactors().get(0)));
+		System.out.println("Сравнение a и b: " + value.get(0).compareTo( value.get(1) ));*/
+		//System.out.println(value.get(0).sort());
+		//System.out.println(value.get(0));
 	}
 }
