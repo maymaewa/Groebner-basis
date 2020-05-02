@@ -26,7 +26,7 @@ public class Colloquium
 		String buffS;
 		int amount = in.nextInt();
 		buffS = in.nextLine();
-		BigPolinom a = new BigPolinom(amount, buffS);
+		BigPolinom a = new BigPolinom(amount, buffS.trim());
 		System.out.println(a);
 	}
 }

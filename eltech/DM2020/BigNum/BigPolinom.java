@@ -41,7 +41,8 @@ public class BigPolinom
 		src = src.replace("_", "");
 		str = src.split("[+]");
 		for(i = 0; i < str.length; i++)
-			factors.add(new BigMonom(amount, str[i]));
+			if(!str[i].equals(""))
+				factors.add(new BigMonom(amount, str[i].trim()));
 		//сортировка
 	}
 
@@ -58,8 +59,12 @@ public class BigPolinom
 	@Override
 	public String toString()
 	{
-		String buff = "";
-		return buff;
+		int i;
+		String buffS = "";
+		for(i = 0; i < factors.size(); i++)
+			buffS += factors.get(i).toString()+"+";
+		buffS = buffS.replace("+-", "-");
+		return buffS.substring(0, buffS.length() - 1);
 	}
 
 	/**

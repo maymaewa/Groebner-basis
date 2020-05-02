@@ -10,7 +10,7 @@ import java.util.*;
 public class BigMonom
 {
 	private BigQ coef;												//коэффициент
-	private ArrayList<Integer> powers = new ArrayList<Integer>();	//степени x_1,x_amount
+	private ArrayList<Integer> powers = new ArrayList<Integer>();	//степени x_i
 	
 	private BigMonom() {}
 	
@@ -49,20 +49,28 @@ public class BigMonom
 					power = Integer.parseInt( str[i].substring(str[i].indexOf("^")+1, str[i].length()) );
 					powers.set(index-1, power);
 				}
+				else
+				{
+					index = Integer.parseInt( str[i] );
+					powers.set(index-1, 1);
+				}
 			}
 		}
+		
 		for(i = 0; i < powers.size(); i++)
 				if(powers.get(i) == null)
 					powers.set(i, 0);
-		System.out.println(coef);
+				
+				
+		/*System.out.println("coef = " + coef);
 		for(i = 0; i < powers.size(); i++ )
-			System.out.println(powers.get(i));
+			System.out.println("xi = " + powers.get(i));*/
 	}
 	
 	/**
 	* Вывод монома в виде строки
 	* Выводиться должно так:
-	* -27/7x1^3x2
+	* (+-)27x1^3
 	*
     * @return String - представление полинома в виде строки
 	*
@@ -72,7 +80,11 @@ public class BigMonom
 	@Override
 	public String toString()
 	{
-		String buff = "";
-		return buff;
+		int i;
+		String buffS = "";
+		buffS += coef.toString();
+		for(i = 0; i < powers.size(); i++)
+			if(powers.get(i) != 0) buffS += "x"+(i+1)+"^"+powers.get(i);
+		return buffS;
 	}
 }
