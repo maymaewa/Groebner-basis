@@ -80,7 +80,7 @@ public class BigPolinom
 	*/
 	public boolean isZero()
 	{
-        return this.factors.get(factors.size()-1).isZero();
+        return this.factors.get(0).isZero();
 	}
 
     /**
