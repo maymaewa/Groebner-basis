@@ -1,0 +1,21 @@
+№0
+ git config --global user.name "[Ваше имя]"
+ git config --global user.email "[Ваша почта]"
+ git config --list
+ cd ...\Colloquium
+ git init
+№1
+ git status
+ git add .
+ git commit -m "[Ваш комментарий]"
+ git branch
+№2
+ git clone https://github.com/The220th/DM2020_ColloquiumBigNums
+ git pull
+ git push
+ git mv old new
+ 
+ 
+ cmdkey /delete:LegacyGeneric:target=git:https://github.com
+ 
+ chcp 65001
