@@ -20,18 +20,17 @@ public class Colloquium
 	public static void start()
 	{
 		Scanner in = new Scanner(System.in);
-		System.out.println("\nВведите кол-во незвестных и полином через пробел");
+		/*System.out.println("\nВведите кол-во незвестных и полином через пробел");
 		String buffS;
 		int amount = in.nextInt();
 		buffS = in.nextLine();
 		BigPolinom a = new BigPolinom(amount, buffS);
 		System.out.println(a);
-		System.out.println("Полином = 0? " + a.isZero());
+		System.out.println("Полином = 0? " + a.isZero());*/
 		
-		/*int i;
-		for(i = 0; i < 1; i++)
+		int i;
+		for(i = 0; i < 2; i++)
 		{
-			Scanner in = new Scanner(System.in);
 			System.out.println("\nВведите кол-во незвестных и полином через пробел");
 			String buffS;
 			int amount = in.nextInt();
@@ -40,6 +39,8 @@ public class Colloquium
 			System.out.println("Введенный полином: " + value.get(i));
 			System.out.println("Полином = 0? " + value.get(i).isZero() + "\n\n");
 		}
+		System.out.println("Сумма: " + value.get(0).add( value.get(1) ));
+		System.out.println("Разница: " + value.get(0).subtract( value.get(1) ));
 		/*System.out.println("Есть ли в a первый моном из b: " + value.get(0).hasMonom(value.get(1).getFactors().get(0)));
 		System.out.println("Сравнение a и b: " + value.get(0).compareTo( value.get(1) ));*/
 		//System.out.println(value.get(0).sort());

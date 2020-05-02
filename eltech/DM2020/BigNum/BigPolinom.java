@@ -46,7 +46,7 @@ public class BigPolinom
 		{
 			factors.add(new BigMonom(amount, str[i].trim()));
 		}
-		factors = this.sort();
+		this.sort();
 	}
 
 	/**
@@ -65,9 +65,9 @@ public class BigPolinom
 		int i;
 		String buffS = "";
 		for(i = 0; i < factors.size(); i++)
-			buffS += factors.get(i).toString()+" + ";
+			if(!factors.get(i).isZero()) buffS += factors.get(i).toString()+" + ";
 		buffS = buffS.replace("+ -", "- ");
-		return buffS.substring(0, buffS.length() - 3);
+		return buffS.equals("") ? "0" : buffS.substring(0, buffS.length() - 3);
 	}
 
 	/**
@@ -128,7 +128,28 @@ public class BigPolinom
     */
 	public BigPolinom add(BigPolinom other)
 	{
-		BigPolinom result = new BigPolinom();
+		int i,n,index;
+		BigPolinom result = this.clone();
+		BigPolinom buffOther = other.clone();
+		BigQ resultCoef;
+		BigQ otherCoef;
+		if(buffOther.factors.size() > result.factors.size())
+			n = buffOther.factors.size();
+		else
+			n = result.factors.size();
+		for(i = 0; i < n; i++)
+		{
+			index = this.monomIndex( buffOther.factors.get(i) );
+			if(index != -1)
+			{
+				resultCoef = result.factors.get(index).getCoef();
+				otherCoef = buffOther.factors.get(i).getCoef();
+				result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
+			}
+			else
+				result.factors.add( buffOther.factors.get(i) );
+		}
+		result.sort();
         return result;
 	}
 
@@ -144,7 +165,32 @@ public class BigPolinom
     */
 	public BigPolinom subtract(BigPolinom other)
 	{
-        BigPolinom result = new BigPolinom();
+        int i,n,index;
+		BigPolinom result = this.clone();
+		BigPolinom buffOther = other.clone();
+		BigQ resultCoef;
+		BigQ otherCoef;
+		BigQ minusOne = new BigQ("-1/1");
+		if(buffOther.factors.size() > result.factors.size())
+			n = buffOther.factors.size();
+		else
+			n = result.factors.size();
+		for(i = 0; i < n; i++)
+		{
+			index = this.monomIndex( buffOther.factors.get(i) );
+			if(index != -1)
+			{
+				resultCoef = result.factors.get(index).getCoef();
+				otherCoef = buffOther.factors.get(i).getCoef();
+				result.factors.get(index).setCoef( resultCoef.subtract(otherCoef) );
+			}
+			else
+			{
+				buffOther.factors.get(i).setCoef( buffOther.factors.get(i).getCoef().multiply(minusOne));
+				result.factors.add( buffOther.factors.get(i) );
+			}
+		}
+		result.sort();
         return result;
 	}
 
@@ -165,24 +211,24 @@ public class BigPolinom
 	}
 	
 	/**
-    * Проверка, есть ли моном в полиноме
+    * Получение индекса монома, если тот имеется в полиноме
 	*
 	* @param BigMonom other - моном, который мы ищем
 	*
-    * @return true - если есть, иначе false
+    * @return index - номер монома в полиноме, если не найден, то возращает -1
     *
     * @version 1
     * @author 
     */
-	public boolean hasMonom(BigMonom other)
+	public int monomIndex(BigMonom other)
 	{
-		int i;
+		int index;
 		if(this.isZero() || other.isZero())
-			return false;
-		for(i = 0; i < this.factors.size(); i++)
-			if(this.factors.get(i).getPowers().equals(other.getPowers()))
-				return true;
-		return false;
+			return -1;
+		for(index = 0; index < this.factors.size(); index++)
+			if(this.factors.get(index).getPowers().equals(other.getPowers()))
+				return index;
+		return -1;
 	}
 	
 	/**
@@ -193,7 +239,7 @@ public class BigPolinom
     * @version 1
     * @author 
     */
-	private ArrayList<BigMonom> sort()
+	private void sort()
 	{
 		int i;
 		BigPolinom buffThis = this.clone();
@@ -204,14 +250,14 @@ public class BigPolinom
 			buffMonom = buffThis.factors.get(0);
 			for(i = 1; i < buffThis.factors.size(); i++)
 			{
-				//System.out.println( buffMonom.compareTo( buffThis.factors.get(i) ));
 				if(buffMonom.compareTo( buffThis.factors.get(i) ) < 0)
 					buffMonom = buffThis.factors.get(i);
 			}
 			result.factors.add(buffMonom);
 			buffThis.factors.remove(buffThis.factors.indexOf(buffMonom));
 		}
-		return result.factors;
+		this.factors = result.factors;
+		//return result.factors;
 	}
 	
 	public ArrayList<BigMonom> getFactors()

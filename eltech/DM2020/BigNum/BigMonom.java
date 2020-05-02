@@ -37,14 +37,14 @@ public class BigMonom
 			powers.add(null);
 		if(src.indexOf("x") == -1)
 		{
-			if(src.equals("") || src.equals("-"))
+			if(src.trim().equals("") || src.trim().equals("-"))
 				src += "1";
 			coef = new BigQ(src);
 		}
 		else
 		{
 			str = src.split("x");
-			if(str[0].equals("") || str[0].equals("-"))
+			if(str[0].trim().equals("") || str[0].trim().equals("-"))
 				str[0] += "1";
 			coef = new BigQ(str[0]);
 			for(i = 1; i < str.length; i++)
@@ -166,5 +166,10 @@ public class BigMonom
 	public BigQ getCoef()
 	{
 		return coef;
+	}
+	
+	public void setCoef(BigQ num)
+	{
+		coef = num;
 	}
 }
