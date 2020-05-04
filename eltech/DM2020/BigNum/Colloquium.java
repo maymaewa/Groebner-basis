@@ -19,14 +19,11 @@ public class Colloquium
 	
 	public static void start()
 	{
+		/*BigMonom one = new BigMonom(2, "4x1^2x2");
+		BigMonom two = new BigMonom(2, "x1");
+		System.out.println(two.multiply(two.getMultiplier(one)));*/
+		
 		Scanner num = new Scanner(System.in);
-		/*System.out.println("\nВведите кол-во незвестных и полином через пробел");
-		String buffS;
-		int amount = in.nextInt();
-		buffS = in.nextLine();
-		BigPolinom a = new BigPolinom(amount, buffS);
-		System.out.println(a);
-		System.out.println("Полином = 0? " + a.isZero());*/
 		System.out.println("\nВведите кол-во незвестных");
 		String buffS;
 		int amount = num.nextInt();
@@ -43,9 +40,9 @@ public class Colloquium
 		System.out.println("Сумма: " + value.get(0).add( value.get(1) ));
 		System.out.println("Разница: " + value.get(0).subtract( value.get(1) ));
 		System.out.println("Произведение: " + value.get(0).multiply( value.get(1) ));
-		/*System.out.println("Есть ли в a первый моном из b: " + value.get(0).hasMonom(value.get(1).getFactors().get(0)));
-		System.out.println("Сравнение a и b: " + value.get(0).compareTo( value.get(1) ));*/
-		//System.out.println(value.get(0).sort());
-		//System.out.println(value.get(0));
+		System.out.println("Частное: " + value.get(0).divide( value.get(1) ));
+		System.out.println("Остаток: " + value.get(0).mod( value.get(1) ));
+		//buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
+		//System.out.println("Остаток: " + value.get(0).mod( value.get(1) ));
 	}
 }

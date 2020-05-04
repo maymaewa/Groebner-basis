@@ -138,6 +138,13 @@ public class BigMonom
 	public int compareTo(BigMonom other)
 	{
 		int i;
+		if(this.isZero())
+			if(other.isZero())
+				return 0;
+			else
+				return -1;
+		else if(other.isZero())
+			return 1;
 		for(i = 0; i < this.powers.size(); i++)
 			if(this.powers.get(i) > other.powers.get(i))
 				return 1;
@@ -145,6 +152,31 @@ public class BigMonom
 				return -1;
 		return 0;
 	}
+	
+	private boolean isMoreThan(BigMonom other)
+    {
+		return this.compareTo(other) > 0 ? true : false;
+    }
+	
+	private boolean isMoreOrEquals(BigMonom other)
+    {
+		return this.compareTo(other) >= 0 ? true : false;
+    }
+	
+	private boolean isLessThan(BigMonom other)
+    {
+		return this.compareTo(other) < 0 ? true : false;
+    }
+	
+	private boolean isLessOrEquals(BigMonom other)
+    {
+		return this.compareTo(other) <= 0 ? true : false;
+    }
+	
+	private boolean isEquals(BigMonom other)
+    {
+		return this.compareTo(other) == 0 ? true : false;
+    }
 	
 	/**
     * Умножение мономов
@@ -166,6 +198,29 @@ public class BigMonom
 		for(i = 0; i < result.powers.size(); i++)
 			result.powers.set(i, result.powers.get(i) + buffOther.powers.get(i) );
         return result;
+	}
+	
+	/**
+    * Получение монома, на который необходимо умножить this, чтобы получить other
+	*
+	* @param BigMonom other - второй моном
+	*
+    * @return BigMonom result - моном, на который умножаем
+    *
+    * @version 1
+    * @author 
+    */
+	public BigMonom getMultiplier(BigMonom other)
+	{
+		int i;
+		BigMonom result = this.clone();
+		result.setCoef( other.getCoef().divide(result.getCoef()) );
+		for(i = 0; i < result.powers.size(); i++)
+			if(result.powers.get(i) <= other.powers.get(i))
+				result.powers.set(i, other.powers.get(i) - result.powers.get(i));
+			else
+				result.powers.set(i, 0);
+		return result;
 	}
 	
 	/*public String getHighPower()

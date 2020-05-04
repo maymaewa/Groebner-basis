@@ -99,6 +99,31 @@ public class BigPolinom
 		return this.factors.get(0).compareTo( other.factors.get(0) );
     }
 
+	private boolean isMoreThan(BigPolinom other)
+    {
+		return this.compareTo(other) > 0 ? true : false;
+    }
+	
+	private boolean isMoreOrEquals(BigPolinom other)
+    {
+		return this.compareTo(other) >= 0 ? true : false;
+    }
+	
+	private boolean isLessThan(BigPolinom other)
+    {
+		return this.compareTo(other) < 0 ? true : false;
+    }
+	
+	private boolean isLessOrEquals(BigPolinom other)
+    {
+		return this.compareTo(other) <= 0 ? true : false;
+    }
+	
+	private boolean isEquals(BigPolinom other)
+    {
+		return this.compareTo(other) == 0 ? true : false;
+    }
+	
 	/**
     * Клонирование объекта
 	*
@@ -236,6 +261,126 @@ public class BigPolinom
         return result;
 	}
 	
+	public BigPolinom multiply(BigMonom other)
+	{
+        int i,j,index;
+		String buffS = "0";
+        BigPolinom result = new BigPolinom();
+		BigPolinom buffThis = new BigPolinom(this.factors.get(0).getPowers().size(), "1");
+        BigMonom buffOther = other.clone();
+		BigQ resultCoef, otherCoef;
+        for(i = 0; i < this.factors.size(); i++)
+		{
+			buffThis.factors.set(0, this.factors.get(i) );
+			buffThis.factors.set(0, buffThis.factors.get(0).multiply(buffOther) );
+			index = result.monomIndex( buffThis.factors.get(0) );
+			if(index != -1)
+			{
+				resultCoef = result.factors.get(index).getCoef();
+				otherCoef = buffOther.getCoef();
+				result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
+			}
+			else
+			{
+				result.factors.add( buffThis.factors.get(0) );
+			}
+		}
+		result.sort();
+        return result;
+	}
+	
+	/**
+    * Деление полиномов
+	*
+	* @param BigMonom other - делитель
+	*
+    * @return result - частное
+    *
+    * @version 1
+    * @author 
+    */
+	public Case divideUniversal(BigPolinom other) throws IllegalArgumentException
+	{
+		if(other.isZero())
+			throw new IllegalArgumentException("Делить на 0 нельзя\n");
+		BigPolinom result = new BigPolinom();
+		BigPolinom buffThis = this.clone();
+		BigPolinom buffOther = other.clone();
+		BigMonom multiplier;
+		BigPolinom zero = new BigPolinom(this.factors.get(0).getPowers().size(), "0");
+		if(buffThis.isLessThan(buffOther))
+		{
+			return new Case(zero, buffThis);
+		}
+		while(buffThis.isMoreOrEquals(buffOther))
+		{
+			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
+			result.factors.add(multiplier);
+			buffThis = buffThis.subtract( buffOther.multiply(multiplier) );
+		}
+		//result.sort();
+		return new Case(result, buffThis);
+	}
+	
+	/**
+    * Частное от деления полиномов
+	*
+	* @param BigMonom other - делитель
+	*
+    * @return result - частное
+    *
+    * @version 1
+    * @author 
+    */
+	public BigPolinom divide(BigPolinom other)
+	{
+		return this.divideUniversal(other).getFirst();
+	}
+	
+	/**
+    * Остаток от деления полиномов
+	*
+	* @param BigMonom other - делитель
+	*
+    * @return buffThis - частное
+    *
+    * @version 1
+    * @author 
+    */
+	public BigPolinom mod(BigPolinom other)
+	{
+		return this.divideUniversal(other).getSecond();
+	}
+	
+	/**
+    * Класс, который необходим для метода divideUniversal
+	*
+    * @version 1
+    * @author 
+    */
+	private class Case
+	{
+		private BigPolinom first;
+		private BigPolinom second;
+
+		public Case(BigPolinom first, BigPolinom second)
+		{
+			this.first = first;
+			this.second = second;
+		}
+
+		public BigPolinom getFirst()
+		{
+			return first;
+		}
+
+		public BigPolinom getSecond()
+		{
+			return second;
+		}
+	}
+	
+	
 	/**
     * Получение индекса монома, если тот имеется в полиноме
 	*
@@ -283,6 +428,11 @@ public class BigPolinom
 			buffThis.factors.remove(buffThis.factors.indexOf(buffMonom));
 		}
 		this.factors = result.factors;
+	}
+	
+	public BigMonom getHighMonom()
+	{
+		return this.factors.get(0).clone();
 	}
 	
 	public ArrayList<BigMonom> getFactors()
