@@ -80,6 +80,8 @@ public class BigPolinom
 	*/
 	public boolean isZero()
 	{
+		if(this.factors.size() == 0)
+			return true;
         return this.factors.get(0).isZero();
 	}
 
@@ -133,10 +135,10 @@ public class BigPolinom
 		BigPolinom buffOther = other.clone();
 		BigQ resultCoef;
 		BigQ otherCoef;
-		if(buffOther.factors.size() > result.factors.size())
+		//if(buffOther.factors.size() > result.factors.size())
 			n = buffOther.factors.size();
-		else
-			n = result.factors.size();
+		//else
+		//	n = result.factors.size();
 		for(i = 0; i < n; i++)
 		{
 			index = this.monomIndex( buffOther.factors.get(i) );
@@ -171,10 +173,10 @@ public class BigPolinom
 		BigQ resultCoef;
 		BigQ otherCoef;
 		BigQ minusOne = new BigQ("-1/1");
-		if(buffOther.factors.size() > result.factors.size())
+		//if(buffOther.factors.size() > result.factors.size())
 			n = buffOther.factors.size();
-		else
-			n = result.factors.size();
+		//else
+		//	n = result.factors.size();
 		for(i = 0; i < n; i++)
 		{
 			index = this.monomIndex( buffOther.factors.get(i) );
@@ -206,7 +208,31 @@ public class BigPolinom
     */
 	public BigPolinom multiply(BigPolinom other)
 	{
+        int i,j,index;
+		String buffS = "0";
         BigPolinom result = new BigPolinom();
+		BigPolinom buffThis = new BigPolinom(this.factors.get(0).getPowers().size(), "1");
+        BigPolinom buffOther = new BigPolinom(other.factors.get(0).getPowers().size(), "1");
+		BigQ resultCoef, otherCoef;
+        for(i = 0; i < this.factors.size(); i++)
+            for(j = 0; j < other.factors.size(); j++)
+			{
+				buffThis.factors.set(0, this.factors.get(i) );
+				buffOther.factors.set(0, other.factors.get(j) );
+				buffThis.factors.set(0, buffThis.factors.get(0).multiply(buffOther.factors.get(0)) );
+				index = result.monomIndex( buffThis.factors.get(0) );
+				if(index != -1)
+				{
+					resultCoef = result.factors.get(index).getCoef();
+					otherCoef = buffOther.factors.get(0).getCoef();
+					result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
+				}
+				else
+				{
+					result.factors.add( buffThis.factors.get(0) );
+				}
+			}
+		result.sort();
         return result;
 	}
 	
@@ -257,7 +283,6 @@ public class BigPolinom
 			buffThis.factors.remove(buffThis.factors.indexOf(buffMonom));
 		}
 		this.factors = result.factors;
-		//return result.factors;
 	}
 	
 	public ArrayList<BigMonom> getFactors()

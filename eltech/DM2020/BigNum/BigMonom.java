@@ -146,6 +146,28 @@ public class BigMonom
 		return 0;
 	}
 	
+	/**
+    * Умножение мономов
+	*
+	* @param BigMonom other - второй моном, на который умножается исходный
+	*
+    * @return BigMonom result - результат вычитания
+    *
+    * @version 1
+    * @author 
+    */
+	public BigMonom multiply(BigMonom other)
+	{
+        int i;
+        BigMonom result = this.clone();
+		BigMonom buffOther;
+		buffOther = other.clone();
+		result.coef = result.coef.multiply(buffOther.coef);
+		for(i = 0; i < result.powers.size(); i++)
+			result.powers.set(i, result.powers.get(i) + buffOther.powers.get(i) );
+        return result;
+	}
+	
 	/*public String getHighPower()
 	{
 		int i;
@@ -161,6 +183,11 @@ public class BigMonom
 	public ArrayList<Integer> getPowers()
 	{
 		return powers;
+	}
+	
+	public void setPowers(ArrayList<Integer> newPowers)
+	{
+		powers = newPowers;
 	}
 	
 	public BigQ getCoef()
