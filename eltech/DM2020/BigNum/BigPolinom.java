@@ -99,27 +99,27 @@ public class BigPolinom
 		return this.factors.get(0).compareTo( other.factors.get(0) );
     }
 
-	private boolean isMoreThan(BigPolinom other)
+	private boolean isMoreThan(BigPolinom other)	//this имеет степень старше other
     {
 		return this.compareTo(other) > 0 ? true : false;
     }
 	
-	private boolean isMoreOrEquals(BigPolinom other)
+	private boolean isMoreOrEquals(BigPolinom other)	//this имеет степень старше или равной other
     {
 		return this.compareTo(other) >= 0 ? true : false;
     }
 	
-	private boolean isLessThan(BigPolinom other)
+	private boolean isLessThan(BigPolinom other)	//this имеет степень меньше other
     {
 		return this.compareTo(other) < 0 ? true : false;
     }
 	
-	private boolean isLessOrEquals(BigPolinom other)
+	private boolean isLessOrEquals(BigPolinom other)	//this имеет степень меньше или равной other
     {
 		return this.compareTo(other) <= 0 ? true : false;
     }
 	
-	private boolean isEquals(BigPolinom other)
+	private boolean isEquals(BigPolinom other)	//this имеет степень равной other
     {
 		return this.compareTo(other) == 0 ? true : false;
     }
@@ -158,22 +158,22 @@ public class BigPolinom
 		int i,n,index;
 		BigPolinom result = this.clone();
 		BigPolinom buffOther = other.clone();
-		BigQ resultCoef;
-		BigQ otherCoef;
+		BigQ resultCoef;	//коэффициент в результирующем мономе
+		BigQ otherCoef;		//коэффициент монома в other
 		//if(buffOther.factors.size() > result.factors.size())
 			n = buffOther.factors.size();
 		//else
 		//	n = result.factors.size();
 		for(i = 0; i < n; i++)
 		{
-			index = this.monomIndex( buffOther.factors.get(i) );
-			if(index != -1)
+			index = this.monomIndex( buffOther.factors.get(i) );		//Смотрим, есть ли уже моном из other в this
+			if(index != -1)												//Если есть, то складываем коэффициенты
 			{
 				resultCoef = result.factors.get(index).getCoef();
 				otherCoef = buffOther.factors.get(i).getCoef();
 				result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
 			}
-			else
+			else														//Иначе просто добавляем моном в полином
 				result.factors.add( buffOther.factors.get(i) );
 		}
 		result.sort();
@@ -261,7 +261,7 @@ public class BigPolinom
         return result;
 	}
 	
-	public BigPolinom multiply(BigMonom other)
+	public BigPolinom multiply(BigMonom other)	//Умножение на моном
 	{
         int i,j,index;
 		String buffS = "0";
@@ -292,9 +292,9 @@ public class BigPolinom
 	/**
     * Деление полиномов
 	*
-	* @param BigMonom other - делитель
+	* @param BigPolinom other - делитель
 	*
-    * @return result - частное
+    * @return частное и остаток
     *
     * @version 1
     * @author 
@@ -309,23 +309,25 @@ public class BigPolinom
 		BigMonom multiplier;
 		BigPolinom zero = new BigPolinom(this.factors.get(0).getPowers().size(), "0");
 		if(buffThis.isLessThan(buffOther))
-		{
 			return new Case(zero, buffThis);
-		}
+		
+		if(!this.isDivided(other))
+			return new Case(zero, buffThis);
+		
 		while(buffThis.isMoreOrEquals(buffOther))
 		{
-			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
-			result.factors.add(multiplier);
-			buffThis = buffThis.subtract( buffOther.multiply(multiplier) );
+			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());		//Здесь получаем моном, на который нужно умножить старший член buffOther, чтобы получить старший член buffThis
+			result.factors.add(multiplier);														//В частное добавляем этот моном
+			buffThis = buffThis.subtract( buffOther.multiply(multiplier) );						//Вычитаем из buffThis полином buffOther, умноженный на multiplier
 		}
 		//result.sort();
-		return new Case(result, buffThis);
+		return new Case(result, buffThis);		//Частное, остаток
 	}
 	
 	/**
     * Частное от деления полиномов
 	*
-	* @param BigMonom other - делитель
+	* @param BigPolinom other - делитель
 	*
     * @return result - частное
     *
@@ -340,7 +342,7 @@ public class BigPolinom
 	/**
     * Остаток от деления полиномов
 	*
-	* @param BigMonom other - делитель
+	* @param BigPolinom other - делитель
 	*
     * @return buffThis - частное
     *
@@ -380,6 +382,29 @@ public class BigPolinom
 		}
 	}
 	
+	/**
+    * НОД полиномов
+	*
+	* @param BigPolinom other - второй полином
+	*
+    * @return result - НОД
+    *
+    * @version 1
+    * @author 
+    */
+	/*public BigPolinom gcd(BigPolinom other)
+    {
+		BigPolinom buffThis = this.clone();
+        BigPolinom buffOther = other.clone();
+		while (!buffThis.isZero() && !buffOther.isZero())
+        {
+            if (buffThis.isMoreThan(buffOther)) 
+                buffThis = buffThis.mod(buffOther);
+            else
+                buffOther = buffOther.mod(buffThis);
+        }
+		return buffThis.add(buffOther);
+    }*/
 	
 	/**
     * Получение индекса монома, если тот имеется в полиноме
@@ -399,6 +424,22 @@ public class BigPolinom
 		for(index = 0; index < this.factors.size(); index++)
 			if(this.factors.get(index).getPowers().equals(other.getPowers()))
 				return index;
+		return -1;
+	}
+	
+	public int monomIndexDivided(BigMonom other)	//Используется для делимости
+	{
+		int index,i, f = 0;
+		for(index = 0; index < this.factors.size(); index++, f = 0)	//индекс монома, который сравниваем с other
+		{
+			for(i = 0; i < other.getPowers().size() && f == 0; i++) //тут смотрим, чтобы встретились переменные, если в каком-то месте переменной нет, то f = 1. Например: x1 и x1x2. В 1-м полиноме нет никакой степени x2, поэтому f станет 1
+			{
+				if(this.factors.get(index).getPowers().get(i) == 0 && (other.getPowers().get(i) != 0) || this.factors.get(index).getPowers().get(i) != 0 && (other.getPowers().get(i) == 0))
+					f = 1;
+			}
+			if(f == 0)	//Если моном имеется, несмотря на что он умножен, то возвращаем его номер
+				return index;
+		}
 		return -1;
 	}
 	
@@ -430,6 +471,32 @@ public class BigPolinom
 		this.factors = result.factors;
 	}
 	
+	/**
+    * Проверка на делимость полиномов
+	*
+    * @return true - делятся, иначе false
+    *
+    * @version 1
+    * @author 
+    */
+	private boolean isDivided(BigPolinom other)
+	{
+		int i,j;
+		int monoms = this.factors.size();	//Получаем кол-во мономов
+		for(i = 0; i < other.factors.size(); i++)	//Прогоняем мономы из other
+			if(this.monomIndexDivided(other.factors.get(i)) != -1)	//если в this встретился моном, то вычитаем его из monoms
+				monoms--;
+		return monoms == 0 ? true : false;
+	}
+	
+	/**
+    * Получение старшего монома
+	*
+    * @return старший моном
+    *
+    * @version 1
+    * @author 
+    */
 	public BigMonom getHighMonom()
 	{
 		return this.factors.get(0).clone();

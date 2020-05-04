@@ -42,6 +42,7 @@ public class Colloquium
 		System.out.println("Произведение: " + value.get(0).multiply( value.get(1) ));
 		System.out.println("Частное: " + value.get(0).divide( value.get(1) ));
 		System.out.println("Остаток: " + value.get(0).mod( value.get(1) ));
+		//System.out.println("НОД: " + value.get(0).gcd( value.get(1) ));
 		//buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
 		//System.out.println("Остаток: " + value.get(0).mod( value.get(1) ));
 	}

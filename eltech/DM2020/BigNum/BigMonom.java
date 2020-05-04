@@ -203,6 +203,8 @@ public class BigMonom
 	/**
     * Получение монома, на который необходимо умножить this, чтобы получить other
 	*
+	* Пример: есть мономы 5x1^2x2^3 и x2. x2 мы домножим на 5x1^2x2^2
+	*
 	* @param BigMonom other - второй моном
 	*
     * @return BigMonom result - моном, на который умножаем
@@ -214,11 +216,11 @@ public class BigMonom
 	{
 		int i;
 		BigMonom result = this.clone();
-		result.setCoef( other.getCoef().divide(result.getCoef()) );
+		result.setCoef( other.getCoef().divide(result.getCoef()) );		//Коэффициент монома = частное от коэффициента other на коэффициент result
 		for(i = 0; i < result.powers.size(); i++)
-			if(result.powers.get(i) <= other.powers.get(i))
+			if(result.powers.get(i) <= other.powers.get(i))		//Если в result какая-то степень меньше степени в other, то запишем разницу степеней other-result
 				result.powers.set(i, other.powers.get(i) - result.powers.get(i));
-			else
+			else	//Степень в result >= other, поэтому домнажать не надо будет => степень 0
 				result.powers.set(i, 0);
 		return result;
 	}
