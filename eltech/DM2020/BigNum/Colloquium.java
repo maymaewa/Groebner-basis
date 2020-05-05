@@ -40,13 +40,13 @@ public class Colloquium
 		boolean f = true;
 		basis.add( new BigPolinom(3, "x1x2-x3^2-x3"));
 		basis.add( new BigPolinom(3, "x1^2-x1-x2x3"));
-		basis.add( new BigPolinom(3, "1x3-x2^2-x2"));
+		basis.add( new BigPolinom(3, "x1x3-x2^2-x2"));
 		value.add( new BigPolinom(3, "x1x2-x3^2-x3"));
 		value.add( new BigPolinom(3, "x1^2-x1-x2x3"));
-		value.add( new BigPolinom(3, "1x3-x2^2-x2"));
+		value.add( new BigPolinom(3, "x1x3-x2^2-x2"));
 		
-		for(i = 0; i < 3; i++)
-			System.out.println(value.get(i));
+		//for(i = 0; i < 3; i++)
+		//	System.out.println(value.get(i));
 		
 		/*for(i = 0; i < 3; i++)
 		{
@@ -65,8 +65,9 @@ public class Colloquium
 		System.out.println("Частное: " + value.get(0).divide( value.get(1) ));
 		System.out.println("Остаток: " + value.get(0).mod( value.get(1) ));*/
 		System.out.println("S polynom(reduce) от 1 и 2: " + value.get(0).sPolynom( value.get(1) ).reduce(basis));
-		for(i = 0; i < 3; i++)
-			System.out.println(value.get(i));
+		
+		//for(i = 0; i < 3; i++)
+		//	System.out.println(value.get(i));
 		
 		//System.out.println("S polynom(reduce) от 2 и 3: " + value.get(1).sPolynom( value.get(2) ).reduce(basis));
 		//for(i = 0; i < 2; i++)

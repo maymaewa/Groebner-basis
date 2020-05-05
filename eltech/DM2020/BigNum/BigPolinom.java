@@ -577,8 +577,6 @@ public class BigPolinom
 			{
 				if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
 					f = 1;
-				else if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
-					f = 1;
 			}
 			i--;
 			if(f == 0)
@@ -586,12 +584,10 @@ public class BigPolinom
 			buffOther = basis.get(i).clone();
 			highCoef = buffOther.getHighMonom().getCoef();
 			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
-			buffOther = buffOther.multiply(multiplier);
-			multiplier = buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
-			buffThis = buffThis.multiply(multiplier);
 			buffOther.factors.remove(0);
+			buffOther = buffOther.multiply(multiplier);
 			buffThis.factors.remove(0);
-			//buffOther = buffOther.multiplyByMinusOne();
+			buffOther = buffOther.multiplyByMinusOne();
 			for(i = 0; i < buffOther.factors.size(); i++)
 				buffOther.factors.get(i).setCoef( buffOther.factors.get(i).getCoef().divide(highCoef) );
 			//multiplier.multiplyByMinusOne();
