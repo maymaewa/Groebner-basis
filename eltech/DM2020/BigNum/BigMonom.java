@@ -201,6 +201,21 @@ public class BigMonom
 	}
 	
 	/**
+    * Умножение монома на -1
+	*
+    * @return BigMonom result - результат умножения
+    *
+    * @version 1
+    * @author 
+    */
+	public void multiplyByMinusOne()
+	{
+        BigMonom result = this.clone();
+		BigQ minusOne = new BigQ("-1/1");
+		coef = coef.multiply(minusOne);
+	}
+	
+	/**
     * Получение монома, на который необходимо умножить this, чтобы получить other
 	*
 	* Пример: есть мономы 5x1^2x2^3 и x2. x2 мы домножим на 5x1^2x2^2
@@ -223,6 +238,25 @@ public class BigMonom
 			else	//Степень в result >= other, поэтому домнажать не надо будет => степень 0
 				result.powers.set(i, 0);
 		return result;
+	}
+	
+	/**
+    * Проверка на делимость мономов
+	*
+    * @return true - делятся, иначе false
+    *
+    * @version 1
+    * @author 
+    */
+	public boolean isDivided(BigMonom other)
+	{
+		int i;
+		for(i = 0; i < other.powers.size(); i++)
+		{
+			if(this.powers.get(i) == 0 && (other.powers.get(i) != 0) || this.powers.get(i) != 0 && (other.powers.get(i) == 0))
+				return false;
+		}
+		return true;
 	}
 	
 	/*public String getHighPower()

@@ -226,7 +226,7 @@ public class BigPolinom
 	*
 	* @param BigPolinom other - второй полином, на который умножается исходный
 	*
-    * @return BigPolinom result - результат вычитания
+    * @return BigPolinom result - результат умножения
     *
     * @version 1
     * @author 
@@ -261,6 +261,16 @@ public class BigPolinom
         return result;
 	}
 	
+	/**
+    * Умножение полинома на моном
+	*
+	* @param BigPolinom other - моном, на который умножается полином
+	*
+    * @return BigPolinom result - результат умножения
+    *
+    * @version 1
+    * @author 
+    */
 	public BigPolinom multiply(BigMonom other)	//Умножение на моном
 	{
         int i,j,index;
@@ -286,6 +296,24 @@ public class BigPolinom
 			}
 		}
 		result.sort();
+        return result;
+	}
+	
+	/**
+    * Умножение полинома на -1
+	*
+    * @return BigPolinom result - результат умножения
+    *
+    * @version 1
+    * @author 
+    */
+	public BigPolinom multiplyByMinusOne()
+	{
+        BigPolinom result = this.clone();
+		BigQ minusOne = new BigQ("-1/1");
+		int i,j;
+		for(i = 0; i < result.factors.size(); i++)
+			result.factors.get(i).multiplyByMinusOne();
         return result;
 	}
 	
@@ -500,6 +528,88 @@ public class BigPolinom
 	public BigMonom getHighMonom()
 	{
 		return this.factors.get(0).clone();
+	}
+	
+	/**
+    * Получение S полинома
+	*
+	* @param BigPolinom other - второй полином в паре
+	*
+    * @return BigPolinom result - s-полином
+    *
+    * @version 1
+    * @author 
+    */
+	public BigPolinom sPolynom(BigPolinom other)
+	{
+		BigPolinom result = new BigPolinom();
+		BigPolinom buffThis = this.clone();
+		BigPolinom buffOther = other.clone();
+		BigMonom multiplier;
+		multiplier = buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
+		buffThis = buffThis.multiply(multiplier);
+		multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
+		buffOther = buffOther.multiply(multiplier);
+		result = buffThis.subtract(buffOther);
+		return result;
+	}
+	
+	/**
+    * Рекуция
+	*
+	* @param BigPolinom other - второй полином в паре
+	*
+    * @return BigPolinom result - s-полином
+    *
+    * @version 1
+    * @author 
+    */
+	public BigPolinom reduce2(ArrayList<BigPolinom> basis)
+	{
+		int i, f;
+		BigPolinom buffThis = this.clone();
+		BigMonom multiplier;						//
+		BigPolinom buffOther;						//Полином, старший член которого делится на старший член buffThis
+		BigQ highCoef;								//Коэффициент при старшем члене buffOther
+		do
+		{
+			for(i = 0, f = 0; i < basis.size() && f == 0; i++)
+			{
+				if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
+					f = 1;
+				else if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
+					f = 1;
+			}
+			i--;
+			if(f == 0)
+				return buffThis;
+			buffOther = basis.get(i).clone();
+			highCoef = buffOther.getHighMonom().getCoef();
+			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
+			buffOther = buffOther.multiply(multiplier);
+			multiplier = buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
+			buffThis = buffThis.multiply(multiplier);
+			buffOther.factors.remove(0);
+			buffThis.factors.remove(0);
+			//buffOther = buffOther.multiplyByMinusOne();
+			for(i = 0; i < buffOther.factors.size(); i++)
+				buffOther.factors.get(i).setCoef( buffOther.factors.get(i).getCoef().divide(highCoef) );
+			//multiplier.multiplyByMinusOne();
+			buffThis = buffThis.add(buffOther);
+			buffThis.sort();
+			//System.out.println("TEST:" + buffThis);
+		} while(f != 0);
+		return buffThis;
+	}
+	
+	public boolean reduce(ArrayList<BigPolinom> basis)
+	{
+		BigPolinom reduced;
+		reduced = this.reduce2(basis);
+		if(!reduced.isZero())
+			basis.add(reduced);
+		System.out.println(reduced);
+		return reduced.isZero() ? false : true;
 	}
 	
 	public ArrayList<BigMonom> getFactors()
