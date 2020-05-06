@@ -82,7 +82,7 @@ public class Colloquium
 				if(basis.get(i).isDivided(basis.get(j)))
 				{
 					basis.remove(i);
-					i--;
+					//i--;
 				}
 			}
 		}
