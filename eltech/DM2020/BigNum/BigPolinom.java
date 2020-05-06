@@ -603,19 +603,26 @@ public class BigPolinom
 			}
 		} while(buffThis.factors.size() > 0);
 		result.sort();
-		//if(!result.isZero())
-		//	result.gcdAndLcm();
+		if(!result.isZero())
+			result.gcdAndLcm();
 		return result;
 	}
 	
 	public boolean reduce(ArrayList<BigPolinom> basis)
 	{
+		int i,f = 0;
 		if(this.isZero())
 			return false;
 		BigPolinom reduced;
 		reduced = this.reduce2(basis);
 		if(!reduced.isZero())
+			for(i = 0; i < basis.size() && f == 0; i++)
+				if(basis.get(i).equals2(reduced))
+					f++;
+		if(!reduced.isZero() && f == 0)
 			basis.add(reduced);
+		else
+			return false;
 		//System.out.println(reduced);
 		return reduced.isZero() ? false : true;
 	}

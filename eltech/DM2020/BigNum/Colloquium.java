@@ -46,12 +46,12 @@ public class Colloquium
 		
 		//value.add( new BigPolinom(3, "0"));
 		
-		//basis.add( new BigPolinom(2, "x2^2-1"));
-		//basis.add( new BigPolinom(2, "x1x2-1"));
+		basis.add( new BigPolinom(2, "x2^2-1"));
+		basis.add( new BigPolinom(2, "x1x2-1"));
 		
-		basis.add( new BigPolinom(3, "x1x2x3-x1x2+x1-x3"));
+		/*basis.add( new BigPolinom(3, "x1x2x3-x1x2+x1-x3"));
 		basis.add( new BigPolinom(3, "x1x2-x2^2+x3"));
-		basis.add( new BigPolinom(3, "x2^3-x3"));
+		basis.add( new BigPolinom(3, "x2^2-x3"));*/
 		
 		for(i = 0; i < basis.size(); i++)
 			value.add(basis.get(i));
@@ -64,12 +64,32 @@ public class Colloquium
 				value.get(i).sPolynom( value.get(j) ).reduce(basis);
 			}
 		
-
-		
-		/*for(i = 0; i < basis.size(); i++)				//Упрощаем базисы
+		for(i = 0; i < basis.size(); i++)				//Упрощаем базисы
 		{
-			//System.out.println(basis.get(i).reduce2(basis));
+			System.out.println(basis.get(i).reduce2(basis));
 			basis.set(i, basis.get(i).reduce2(basis));
+		}
+		for(i = 0; i < basis.size()-1; i++)
+		{
+			if(basis.get(i).equals2(basis.get(i+1)))
+			{
+				basis.remove(i);
+				i--;
+			}
+		}
+		
+		/*for(i = 0; i < basis.size(); i++)				//Упрощаем базисы2
+		{
+			for(j = i+1; j < basis.size(); j++)
+			{
+				f = basis.get(i).sPolynom(basis.get(j)).reduce(basis);
+				//System.out.println(i + " " +  f);
+				if(f)
+				{
+					i = 0;
+					j = 0;
+				}
+			}
 		}*/
 		
 		//System.out.println("S polynom(reduce) от 1 и 2: " + value.get(0).sPolynom( value.get(1) ).reduce(basis));
@@ -79,9 +99,5 @@ public class Colloquium
 		
 		for(i = 0; i < basis.size(); i++)
 			System.out.println(basis.get(i));
-		
-		for(i = 0; i < value.size(); i++)
-			for(j = i+1; j < value.size(); j++)
-				System.out.println("TEST: " + value.get(i).sPolynom(value.get(j)).reduce2(basis));
 	}
 }
