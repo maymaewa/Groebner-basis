@@ -124,6 +124,13 @@ public class BigPolinom
 		return this.compareTo(other) == 0 ? true : false;
     }
 	
+	public boolean equals2(BigPolinom other)	//this имеет степень равной other
+    {
+		if(this.toString().equals(other.toString()))
+			return true;
+		return false;
+    }
+	
 	/**
     * Клонирование объекта
 	*
@@ -570,15 +577,15 @@ public class BigPolinom
 		int i, f;
 		BigPolinom buffThis = this.clone();
 		BigPolinom result = new BigPolinom(buffThis.factors.get(0).getPowers().size(), "0");
-		BigMonom multiplier, multiplier2;			//
+		BigMonom multiplier;
 		BigPolinom buffOther;						//Полином, старший член которого делится на старший член buffThis
-		BigQ highCoef;								//Коэффициент при старшем члене buffOther
 		do
 		{
 			for(i = 0, f = 0; i < basis.size() && f == 0; i++)
 			{
-				if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
-					f = 1;
+				if(!buffThis.equals2(basis.get(i)))
+					if(buffThis.getHighMonom().isDivided( basis.get(i).getHighMonom() ))
+						f = 1;
 			}
 			i--;
 			if(f == 0)
@@ -589,35 +596,57 @@ public class BigPolinom
 			else
 			{
 				buffOther = basis.get(i).clone();
-				highCoef = buffOther.getHighMonom().getCoef();
 				multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());
-				//System.out.println("FIRST: "+ buffThis + " : " + buffOther + " : mul: " + multiplier);
-				multiplier2 = buffThis.getHighMonom().getMultiplier(buffOther.getHighMonom());
-				multiplier2.setCoef(new BigQ("1/1"));
 				buffOther = buffOther.multiply(multiplier);
-				buffThis = buffThis.multiply(multiplier2);
-				buffOther.factors.remove(0);
-				buffThis.factors.remove(0);
 				buffThis = buffThis.subtract(buffOther);
-				if(buffThis.factors.size() == 1)
-					buffThis.factors.get(0).setCoef(new BigQ("1"));
 				buffThis.sort();
-				//System.out.println("TEST: "+ buffThis + " : " + buffOther);
-				//System.out.println(buffThis.factors.size());
 			}
 		} while(buffThis.factors.size() > 0);
-		//System.out.println(result);
+		result.sort();
+		//if(!result.isZero())
+		//	result.gcdAndLcm();
 		return result;
 	}
 	
 	public boolean reduce(ArrayList<BigPolinom> basis)
 	{
+		if(this.isZero())
+			return false;
 		BigPolinom reduced;
 		reduced = this.reduce2(basis);
 		if(!reduced.isZero())
 			basis.add(reduced);
 		//System.out.println(reduced);
 		return reduced.isZero() ? false : true;
+	}
+	
+	private void gcdAndLcm()
+	{
+		int i;
+		BigQ temp = new BigQ("0/1");
+		BigQ temp2 = new BigQ("0/1");
+		BigQ minusOne = new BigQ("-1/1");
+		for (i = 0; i < factors.size(); i++)
+		{
+			if(temp.isZero() && !this.factors.get(i).isZero())
+			{
+				temp.getP().setNumber(this.factors.get(i).getCoef().getP().getNumber());
+				temp.getQ().setNumber(this.factors.get(i).getCoef().getQ().getNumber());
+			}
+			else
+			{
+				temp.getP().setNumber(temp.getP().getNumber().gcd(this.factors.get(i).getCoef().getP().getNumber()));
+				temp.getQ().setNumber(temp.getQ().getNumber().lcm(this.factors.get(i).getCoef().getQ().getNumber()));
+			}
+		}
+		for (i = 0; i < factors.size(); i++)
+		{
+			temp2 = this.factors.get(i).getCoef().divide(temp);
+			this.factors.get(i).setCoef(temp2.reduce());
+		}
+		if(!this.factors.get(0).getCoef().checkPositive())
+			for(i = 0; i < factors.size(); i++)
+				this.factors.get(i).setCoef( this.factors.get(i).getCoef().multiply(minusOne) );
 	}
 	
 	public ArrayList<BigMonom> getFactors()

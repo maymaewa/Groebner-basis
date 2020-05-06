@@ -35,25 +35,53 @@ public class Colloquium
 		int amount = num.nextInt();
 		int i, j, flag;
 		boolean f = true;
-		basis.add( new BigPolinom(3, "x1x2-x3^2-x3"));
+		
+		/*basis.add( new BigPolinom(3, "x1x2-x3^2-x3"));
 		basis.add( new BigPolinom(3, "x1^2-x1-x2x3"));
-		basis.add( new BigPolinom(3, "x1x3-x2^2-x2"));
-		value.add( new BigPolinom(3, "x1x2-x3^2-x3"));
-		value.add( new BigPolinom(3, "x1^2-x1-x2x3"));
-		value.add( new BigPolinom(3, "x1x3-x2^2-x2"));
+		basis.add( new BigPolinom(3, "x1x3-x2^2-x2"));*/
 		
-		/*basis.add( new BigPolinom(2, "x2^2-1"));
-		basis.add( new BigPolinom(2, "x1x2-1"));
-		value.add( new BigPolinom(2, "x1^2x2+x1x2^2+x2^2"));
+		/*basis.add( new BigPolinom(3, "x1x2-x3^2-x3"));
+		basis.add( new BigPolinom(3, "x1^2+x1-x2x3"));
+		basis.add( new BigPolinom(3, "x1x3-x2^2-x2"));*/
 		
-		System.out.println(value.get(0).reduce(basis));*/
+		//value.add( new BigPolinom(3, "0"));
+		
+		//basis.add( new BigPolinom(2, "x2^2-1"));
+		//basis.add( new BigPolinom(2, "x1x2-1"));
+		
+		basis.add( new BigPolinom(3, "x1x2x3-x1x2+x1-x3"));
+		basis.add( new BigPolinom(3, "x1x2-x2^2+x3"));
+		basis.add( new BigPolinom(3, "x2^3-x3"));
+		
+		for(i = 0; i < basis.size(); i++)
+			value.add(basis.get(i));
+		//System.out.println(value.get(0).reduce(basis));
+		
+		for(i = 0; i < value.size(); i++)
+			for(j = i+1; j < value.size(); j++)
+			{
+				//System.out.println(i + ", " + j);
+				value.get(i).sPolynom( value.get(j) ).reduce(basis);
+			}
+		
 
-		System.out.println("S polynom(reduce) от 1 и 2: " + value.get(0).sPolynom( value.get(1) ).reduce(basis));
-		System.out.println("S polynom(reduce) от 2 и 3: " + value.get(1).sPolynom( value.get(2) ).reduce(basis));
+		
+		/*for(i = 0; i < basis.size(); i++)				//Упрощаем базисы
+		{
+			//System.out.println(basis.get(i).reduce2(basis));
+			basis.set(i, basis.get(i).reduce2(basis));
+		}*/
+		
+		//System.out.println("S polynom(reduce) от 1 и 2: " + value.get(0).sPolynom( value.get(1) ).reduce(basis));
+		//System.out.println("S polynom(reduce) от 2 и 3: " + value.get(1).sPolynom( value.get(2) ).reduce(basis));
 		
 		System.out.println("Размер базиса: " + basis.size());
 		
 		for(i = 0; i < basis.size(); i++)
 			System.out.println(basis.get(i));
+		
+		for(i = 0; i < value.size(); i++)
+			for(j = i+1; j < value.size(); j++)
+				System.out.println("TEST: " + value.get(i).sPolynom(value.get(j)).reduce2(basis));
 	}
 }
