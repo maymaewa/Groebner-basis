@@ -231,7 +231,7 @@ public class BigMonom
 	{
 		int i;
 		BigMonom result = this.clone();
-		result.setCoef( other.getCoef().divide(result.getCoef()) );		//Коэффициент монома = частное от коэффициента other на коэффициент result
+		result.setCoef( other.getCoef().divide(result.getCoef()).reduce() );		//Коэффициент монома = частное от коэффициента other на коэффициент result
 		for(i = 0; i < result.powers.size(); i++)
 			if(result.powers.get(i) <= other.powers.get(i))		//Если в result какая-то степень меньше степени в other, то запишем разницу степеней other-result
 				result.powers.set(i, other.powers.get(i) - result.powers.get(i));
@@ -250,12 +250,14 @@ public class BigMonom
     */
 	public boolean isDivided(BigMonom other)
 	{
-		int i;
+		int i, f = 0;
 		for(i = 0; i < other.powers.size(); i++)
 		{
-			if(this.powers.get(i) == 0 && (other.powers.get(i) != 0) || this.powers.get(i) != 0 && (other.powers.get(i) == 0))
-				return false;
+			if(other.powers.get(i) <= this.powers.get(i))
+				f++;
 		}
+		if(f != other.powers.size())
+			return false;
 		return true;
 	}
 	
