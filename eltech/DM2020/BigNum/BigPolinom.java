@@ -464,15 +464,10 @@ public class BigPolinom
 	
 	public int monomIndexDivided(BigMonom other)	//Используется для делимости
 	{
-		int index,i, f = 0;
-		for(index = 0; index < this.factors.size(); index++, f = 0)	//индекс монома, который сравниваем с other
+		int index;
+		for(index = 0; index < this.factors.size(); index++)	//индекс монома, который сравниваем с other
 		{
-			for(i = 0; i < other.getPowers().size() && f == 0; i++) //тут смотрим, чтобы встретились переменные, если в каком-то месте переменной нет, то f = 1. Например: x1 и x1x2. В 1-м полиноме нет никакой степени x2, поэтому f станет 1
-			{
-				if(this.factors.get(index).getPowers().get(i) == 0 && (other.getPowers().get(i) != 0) || this.factors.get(index).getPowers().get(i) != 0 && (other.getPowers().get(i) == 0))
-					f = 1;
-			}
-			if(f == 0)	//Если моном имеется, несмотря на что он умножен, то возвращаем его номер
+			if(this.factors.get(index).isDivided(other))
 				return index;
 		}
 		return -1;
@@ -515,7 +510,7 @@ public class BigPolinom
     * @version 1
     * @author 
     */
-	private boolean isDivided(BigPolinom other)
+	public boolean isDivided(BigPolinom other)
 	{
 		int i,j;
 		int monoms = this.factors.size();	//Получаем кол-во мономов
@@ -601,7 +596,7 @@ public class BigPolinom
 				buffThis = buffThis.subtract(buffOther);
 				buffThis.sort();
 			}
-		} while(buffThis.factors.size() > 0);
+		} while(!buffThis.isZero());
 		result.sort();
 		if(!result.isZero())
 			result.gcdAndLcm();

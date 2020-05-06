@@ -46,12 +46,12 @@ public class Colloquium
 		
 		//value.add( new BigPolinom(3, "0"));
 		
-		basis.add( new BigPolinom(2, "x2^2-1"));
-		basis.add( new BigPolinom(2, "x1x2-1"));
+		//basis.add( new BigPolinom(2, "x2^2-1"));
+		//basis.add( new BigPolinom(2, "x1x2-1"));
 		
-		/*basis.add( new BigPolinom(3, "x1x2x3-x1x2+x1-x3"));
+		basis.add( new BigPolinom(3, "x1x2x3-x1x2+x1-x3"));
 		basis.add( new BigPolinom(3, "x1x2-x2^2+x3"));
-		basis.add( new BigPolinom(3, "x2^2-x3"));*/
+		basis.add( new BigPolinom(3, "x2^2-x3"));
 		
 		for(i = 0; i < basis.size(); i++)
 			value.add(basis.get(i));
@@ -66,15 +66,24 @@ public class Colloquium
 		
 		for(i = 0; i < basis.size(); i++)				//Упрощаем базисы
 		{
-			System.out.println(basis.get(i).reduce2(basis));
+			//System.out.println(basis.get(i).reduce2(basis));
 			basis.set(i, basis.get(i).reduce2(basis));
-		}
-		for(i = 0; i < basis.size()-1; i++)
-		{
-			if(basis.get(i).equals2(basis.get(i+1)))
+			//System.out.println("TEST " + basis.get(i).isZero() + " i = " + i);
+			if(basis.get(i).isZero())
 			{
 				basis.remove(i);
 				i--;
+			}
+		}
+		for(i = 0; i < basis.size()-1; i++)
+		{
+			for(j = i+1; j < basis.size(); j++)
+			{
+				if(basis.get(i).isDivided(basis.get(j)))
+				{
+					basis.remove(i);
+					i--;
+				}
 			}
 		}
 		
