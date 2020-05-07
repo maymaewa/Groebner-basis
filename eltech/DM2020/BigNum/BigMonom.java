@@ -253,15 +253,13 @@ public class BigMonom
 		int i, f = 0;
 		for(i = 0; i < other.powers.size(); i++)
 		{
-			if(other.powers.get(i) <= this.powers.get(i))
-				f++;
+			if(other.powers.get(i) > this.powers.get(i))
+				return false;
 		}
-		if(f != other.powers.size())
-			return false;
 		return true;
 	}
 	
-	//other.powers.get(i) == 0 || this.powers.get(i) != 0
+	//&& this.powers.get(i) != 0) || (other.powers.get(i) != 0 && this.powers.get(i) == 0))
 	
 	/*public String getHighPower()
 	{

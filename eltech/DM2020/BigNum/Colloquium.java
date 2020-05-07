@@ -21,7 +21,7 @@ public class Colloquium
 	{
 		System.out.println("\nВведите кол-во незвестных");
 		String buffS;
-		int amount;
+		int amount,i;
 		
 		do
 		{
