@@ -599,7 +599,7 @@ public class BigPolinom
 		} while(!buffThis.isZero());
 		result.sort();
 		if(!result.isZero())
-			result.gcdAndLcm();
+			result.divideByHighCoef();
 		return result;
 	}
 	
@@ -610,6 +610,7 @@ public class BigPolinom
 			return false;
 		BigPolinom reduced;
 		reduced = this.reduce2(basis);
+		//System.out.println(reduced);
 		if(!reduced.isZero())
 			for(i = 0; i < basis.size() && f == 0; i++)
 				if(basis.get(i).equals2(reduced))
@@ -618,8 +619,19 @@ public class BigPolinom
 			basis.add(reduced);
 		else
 			return false;
-		//System.out.println(reduced);
 		return reduced.isZero() ? false : true;
+	}
+	
+	public boolean reduceBasis(ArrayList<BigPolinom> basis)
+	{
+		if(this.isZero())
+			return false;
+		BigPolinom reduced;
+		reduced = this.reduce2(basis);
+		if(reduced.isZero())
+			return false;
+		//System.out.println(reduced);
+		return reduced.equals2(this) ? false : true;
 	}
 	
 	private void gcdAndLcm()
@@ -649,6 +661,16 @@ public class BigPolinom
 		if(!this.factors.get(0).getCoef().checkPositive())
 			for(i = 0; i < factors.size(); i++)
 				this.factors.get(i).setCoef( this.factors.get(i).getCoef().multiply(minusOne) );
+	}
+	
+	private void divideByHighCoef()
+	{
+		int i;
+		BigQ highCoef = this.factors.get(0).getCoef();
+		for (i = 0; i < factors.size(); i++)
+		{
+			this.factors.get(i).setCoef(this.factors.get(i).getCoef().divide(highCoef).reduce());
+		}
 	}
 	
 	public ArrayList<BigMonom> getFactors()

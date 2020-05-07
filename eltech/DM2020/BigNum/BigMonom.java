@@ -261,6 +261,8 @@ public class BigMonom
 		return true;
 	}
 	
+	//other.powers.get(i) == 0 || this.powers.get(i) != 0
+	
 	/*public String getHighPower()
 	{
 		int i;
