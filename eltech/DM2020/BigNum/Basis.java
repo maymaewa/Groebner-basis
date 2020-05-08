@@ -7,6 +7,7 @@ public class Basis
 	private ArrayList<BigPolinom> polynoms = new ArrayList<BigPolinom>();
 	private ArrayList<BigPolinom> basePolynoms = new ArrayList<BigPolinom>();
 	private ArrayList<String> linked = new ArrayList<String>();	//Записываем те многочлены, с которыми уже строили S полином
+	private ArrayList<BigPolinom> buffpolynoms = new ArrayList<BigPolinom>();
 	private int maxpower;
 	
 	public void addBasis(String newPolynom)
@@ -23,12 +24,15 @@ public class Basis
 	
 	public void doActions()
 	{
+		copyBasis();
 		linked.remove(linked.size()-1);
-		this.sPolynom();
-		//this.sPolynom2();
-		this.simple();
-		this.removeDivided();
-		this.output();
+		sPolynom();
+		//sPolynom2();
+		simple();
+		//simple2();
+		removeDivided();
+		//removeDividedReverse();
+		output();
 	}
 	
 	public void output()
@@ -42,13 +46,28 @@ public class Basis
 	private void removeDivided()
 	{
 		int i,j;
-		for(i = 0; i < this.polynoms.size()-1; i++)
+		for(i = 0; i < this.polynoms.size(); i++)
 		{
 			for(j = 0; j < this.polynoms.size(); j++)
 			{
 				if(i != j)
-					//if(this.polynoms.get(i).getHighMonom().isDivided(this.polynoms.get(j).getHighMonom()))
-					if(this.polynoms.get(i).equals2(this.polynoms.get(j)))
+					if(this.polynoms.get(i).getHighMonom().isDivided(this.polynoms.get(j).getHighMonom()))
+					//if(this.polynoms.get(i).equals2(this.polynoms.get(j)))
+						this.polynoms.remove(i);
+			}
+		}
+	}
+	
+	private void removeDividedReverse()
+	{
+		int i,j;
+		for(i = this.polynoms.size()-1; i > 0; i--)
+		{
+			for(j = 0; j < this.polynoms.size(); j++)
+			{
+				if(i != j)
+					if(this.polynoms.get(i).getHighMonom().isDivided(this.polynoms.get(j).getHighMonom()))
+					//if(this.polynoms.get(i).equals2(this.polynoms.get(j)))
 						this.polynoms.remove(i);
 			}
 		}
@@ -69,15 +88,34 @@ public class Basis
 		}
 	}
 	
+	private void simple2()
+	{
+		int i;
+		for(i = 0; i < this.polynoms.size(); i++)				//Упрощаем базисы
+		{
+			this.polynoms.set(i, this.polynoms.get(i).reduce2(this.buffpolynoms));
+			//System.out.println("TEST " + this.polynoms.get(i).isZero() + " i = " + i);
+			if(this.polynoms.get(i).isZero())
+			{
+				this.polynoms.remove(i);
+				i--;
+			}
+		}
+		copyBasis();
+	}
+	
 	private void sPolynom()
 	{
-		int k;
 		Integer i,j;
 		for(i = 0; i < this.basePolynoms.size(); i++)
 			for(j = i+1; j < this.basePolynoms.size(); j++)
 			{
 				//System.out.println(this.isLinked(i,j));
-				this.basePolynoms.get(i).sPolynom( this.basePolynoms.get(j) ).reduce(this.polynoms);
+				if(!this.isLinked(i,j))
+				{
+					this.basePolynoms.get(i).sPolynom( this.basePolynoms.get(j) ).reduce(this.polynoms);
+					linked.add("");
+				}
 			}
 	}
 	
@@ -85,26 +123,27 @@ public class Basis
 	{
 		Integer i,j;
 		i = 0; j = 0;
-		while(i < this.polynoms.size()-1)
+		while(i < this.polynoms.size())
 		{
-			j = i+1;
+			j = 0;
 			while(j < this.polynoms.size())
 			{
-				System.out.println(this.isLinked(i,j));
-				if(!this.isLinked(i,j))
-				{
-					this.polynoms.get(i).sPolynom( this.polynoms.get(j) ).reduce(this.polynoms);
-					i = 0; j = 1;
-				}
+				if(j != i)
+					if(!this.isLinked(i,j))
+					{
+						this.polynoms.get(i).sPolynom( this.polynoms.get(j) ).reduceBasis(this.polynoms);
+						linked.add("");
+					}
 				j++;
 			}
 			i++;
 		}
+		copyBasis();
 	}
 	
 	private boolean isLinked(Integer ths, Integer other)		//Проверка на связку
 	{
-		String buffS = other.toString();
+		String buffS = "," + other.toString();
 		String buffLink = linked.get(ths);
 		//System.out.println(buffS + " : " + buffLink);
 		if(buffLink.indexOf(buffS) == -1)
@@ -117,6 +156,17 @@ public class Basis
 			return false;
 		}
 		return true;
+	}
+	
+	private void copyBasis()
+	{
+		int i;
+		while(polynoms.size() > buffpolynoms.size())
+			buffpolynoms.add(new BigPolinom(maxpower, "0"));
+		while(buffpolynoms.size() > polynoms.size())
+			buffpolynoms.remove(buffpolynoms.size()-1);
+		for(i = 0; i < polynoms.size(); i++)
+			buffpolynoms.set(i, polynoms.get(i));
 	}
 }
 
@@ -137,8 +187,12 @@ public class Basis
 	x1x2-1
 
 	3
-	x1^2x2x3-x1x2+x1-x3
+	x1^3x2x3-x1x2+x1-x3
 	x1x2-x2^2+x3
-	x2^2-x3
+	x2^3-x3
+
+	2
+	-6x1^2+6x1-6x2^2+6x2-2
+	4x1^3-6x1^2-4x2^3+6x2^2
 
 */

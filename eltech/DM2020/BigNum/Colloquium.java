@@ -19,6 +19,11 @@ public class Colloquium
 	
 	public static void start()
 	{
+		/*BigPolinom test = new BigPolinom(1, "x1^6-4x1^5+2x1^4+5x1^3+2x1^2-4x1-8");
+		BigPolinom test2 = new BigPolinom(1, "x1^5-x1^4-x1^3+x1^2-4x1-4");
+		System.out.println(test.gcd(test2));
+		System.out.println(test.lcm(test2));
+		System.out.println(test.multiply(test2));*/
 		System.out.println("\nВведите кол-во незвестных");
 		String buffS;
 		int amount,i;

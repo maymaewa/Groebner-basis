@@ -96,6 +96,8 @@ public class BigPolinom
     */
     public int compareTo(BigPolinom other)
     {
+		if(this.isZero() || other.isZero())
+			return this.factors.size() >= other.factors.size() ? (this.factors.size() == other.factors.size() ?  0 : 1 ) : -1 ;
 		return this.factors.get(0).compareTo( other.factors.get(0) );
     }
 
@@ -256,7 +258,7 @@ public class BigPolinom
 				if(index != -1)
 				{
 					resultCoef = result.factors.get(index).getCoef();
-					otherCoef = buffOther.factors.get(0).getCoef();
+					otherCoef = buffThis.factors.get(0).getCoef();
 					result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
 				}
 				else
@@ -294,7 +296,7 @@ public class BigPolinom
 			if(index != -1)
 			{
 				resultCoef = result.factors.get(index).getCoef();
-				otherCoef = buffOther.getCoef();
+				otherCoef = buffThis.factors.get(0).getCoef();
 				result.factors.get(index).setCoef( resultCoef.add(otherCoef) );
 			}
 			else
@@ -348,12 +350,11 @@ public class BigPolinom
 		
 		if(!this.isDivided(other))
 			return new Case(zero, buffThis);
-		
 		while(buffThis.isMoreOrEquals(buffOther))
 		{
 			multiplier = buffOther.getHighMonom().getMultiplier(buffThis.getHighMonom());		//Здесь получаем моном, на который нужно умножить старший член buffOther, чтобы получить старший член buffThis
 			result.factors.add(multiplier);														//В частное добавляем этот моном
-			buffThis = buffThis.subtract( buffOther.multiply(multiplier) );						//Вычитаем из buffThis полином buffOther, умноженный на multiplier
+			buffThis = buffThis.subtract( buffOther.multiply(multiplier) );					//Вычитаем из buffThis полином buffOther, умноженный на multiplier
 		}
 		//result.sort();
 		return new Case(result, buffThis);		//Частное, остаток
@@ -388,6 +389,45 @@ public class BigPolinom
 	{
 		return this.divideUniversal(other).getSecond();
 	}
+	
+	/**
+    * нод(this;other)
+    *
+    * @param BigPolinom other - второй полнином для нахождения нод
+    * @return BigPolinom result - нод(this;other)
+    *
+    * @version 1
+    * @author 
+    */
+    public BigPolinom gcd(BigPolinom other)
+    {
+		BigPolinom buffThis = this.clone();
+        BigPolinom buffOther = other.clone();
+		BigPolinom result = buffOther;
+		if(buffOther.isMoreThan(buffThis))
+		{
+			result = buffOther;
+			buffOther = buffThis;
+			buffThis = result;
+			result = buffOther;
+		}
+		if(!buffThis.isDivided(buffOther))
+			return new BigPolinom(this.factors.get(0).getPowers().size(), "0");
+		while(!buffThis.mod(buffOther).isZero())
+        {
+            result = buffThis.mod(buffOther);
+			buffThis = buffOther;
+			buffOther = result;
+			//System.out.println(buffThis + " : " + buffOther + " !! " + result);
+        }
+		result.divideByHighCoef();
+		return result;
+    }
+	
+	public BigPolinom lcm(BigPolinom other)
+    {
+		return this.multiply(other).divide(this.gcd(other));
+    }
 	
 	/**
     * Класс, который необходим для метода divideUniversal
@@ -512,12 +552,13 @@ public class BigPolinom
     */
 	public boolean isDivided(BigPolinom other)
 	{
-		int i,j;
+		/*int i,j;
 		int monoms = this.factors.size();	//Получаем кол-во мономов
 		for(i = 0; i < other.factors.size(); i++)	//Прогоняем мономы из other
 			if(this.monomIndexDivided(other.factors.get(i)) != -1)	//если в this встретился моном, то вычитаем его из monoms
 				monoms--;
-		return monoms == 0 ? true : false;
+		return monoms == 0 ? true : false;*/
+		return this.getHighMonom().isDivided(other.getHighMonom());
 	}
 	
 	/**
@@ -622,16 +663,15 @@ public class BigPolinom
 		return reduced.isZero() ? false : true;
 	}
 	
-	public boolean reduceBasis(ArrayList<BigPolinom> basis)
+	public void reduceBasis(ArrayList<BigPolinom> basis)
 	{
-		if(this.isZero())
-			return false;
-		BigPolinom reduced;
-		reduced = this.reduce2(basis);
-		if(reduced.isZero())
-			return false;
-		//System.out.println(reduced);
-		return reduced.equals2(this) ? false : true;
+		if(!this.isZero())
+		{
+			BigPolinom reduced;
+			reduced = this.reduce2(basis);
+			if(!reduced.isZero())
+				basis.add(reduced);
+		}
 	}
 	
 	private void gcdAndLcm()

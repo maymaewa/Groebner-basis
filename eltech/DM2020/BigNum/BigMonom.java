@@ -197,6 +197,7 @@ public class BigMonom
 		result.coef = result.coef.multiply(buffOther.coef);
 		for(i = 0; i < result.powers.size(); i++)
 			result.powers.set(i, result.powers.get(i) + buffOther.powers.get(i) );
+		//System.out.println("DBG: " + result);
         return result;
 	}
 	
@@ -253,13 +254,15 @@ public class BigMonom
 		int i, f = 0;
 		for(i = 0; i < other.powers.size(); i++)
 		{
-			if(other.powers.get(i) > this.powers.get(i))
-				return false;
+			if(other.powers.get(i) <= this.powers.get(i))
+				f++;
 		}
+		if(f != other.powers.size())
+			return false;
 		return true;
 	}
 	
-	//&& this.powers.get(i) != 0) || (other.powers.get(i) != 0 && this.powers.get(i) == 0))
+	//if(other.powers.get(i) > this.powers.get(i) || (this.powers.get(i) == 0 && other.powers.get(i) != 0) || (other.powers.get(i) == 0 && this.powers.get(i) != 0))
 	
 	/*public String getHighPower()
 	{
