@@ -26,10 +26,11 @@ public class Basis
 	{
 		copyBasis();
 		//linked.remove(linked.size()-1);
-		sPolynom();
+		//sPolynom();
 		//sPolynom2();
-		simple();
-		simple2();
+		//simple();
+		//simple2();
+		Buhberger();
 		removeDivided();
 		//removeDividedReverse();
 		output();
@@ -71,6 +72,24 @@ public class Basis
 		}
 	}
 	
+	private void Buhberger()
+	{
+		boolean f = true;
+		sPolynom();
+		while(f)
+		{
+			//removeDivided();
+			f = simple3();
+			if(!f)
+				f = sPolynom3();
+			else
+				sPolynom3();
+			//removeEquals();//equals
+			System.out.println(f);
+		}
+		removeEquals();
+	}
+	
 	private void removeDivided()
 	{
 		int i,j;
@@ -90,22 +109,25 @@ public class Basis
 		}
 	}
 	
-	private void removeDividedReverse()
+	private void removeEquals()
 	{
 		int i,j;
-		for(i = this.polynoms.size()-1; i > 0; i--)
+		for(i = 0; i < this.polynoms.size(); i++)
 		{
 			for(j = 0; j < this.polynoms.size(); j++)
 			{
 				if(i != j)
-					if(this.polynoms.get(i).getHighMonom().isDivided(this.polynoms.get(j).getHighMonom()))
-					//if(this.polynoms.get(i).equals2(this.polynoms.get(j)))
+					if(this.polynoms.get(i).equals2(this.polynoms.get(j)))
+					{
 						this.polynoms.remove(i);
+						i = 0;
+						j = 0;
+					}
 			}
 		}
 	}
 	
-	private void simple()
+	/*private void simple()
 	{
 		int i;
 		for(i = 0; i < this.polynoms.size(); i++)				//Упрощаем базисы
@@ -120,20 +142,60 @@ public class Basis
 		}
 	}
 	
-	private void simple2()
+	private boolean simple2()
 	{
 		BigPolinom buff;
 		int i = 0;
+		boolean res = false;
+		System.out.println("Размер: " + this.polynoms.size());
+		for(i = 0; i < this.polynoms.size(); i++)				//Упрощаем базисы
+		{
+			buff = this.polynoms.get(i);
+			this.polynoms.set(i, this.polynoms.get(i).reduce2(this.polynoms));
+			//System.out.println("TEST " + this.polynoms.get(i).isZero() + " i = " + i);
+			if(this.polynoms.get(i).isZero())
+			{
+				this.polynoms.remove(i);
+				i--;
+			}
+			else if(!this.polynoms.get(i).equals2(buff))
+				res = true;
+			System.out.println(i + "/" + (this.polynoms.size()-1));
+		}
+		copyBasis();
+		return res;
+	}*/
+	
+	private boolean simple3()
+	{
+		boolean f = false;
+		BigPolinom buff;
+		int i = 0;
+		for(i = 0; i < this.polynoms.size(); i++)
+		{
+			buff = this.polynoms.get(i);
+			buff.divideByHighCoef();
+			this.polynoms.set(i, buff);
+		}
+		i = 0;
 		do				//Упрощаем базисы
 		{
-			buff = this.polynoms.get(i).reduce2(this.polynoms);
-			if(!(buff.equals2(this.polynoms.get(i)) || buff.isZero()))
+			buff = this.polynoms.get(i).reduce22(this.polynoms);	//reduce2
+			if(!(buff.equals2(this.polynoms.get(i))))
 			{
-				this.polynoms.set(i, buff);
-				i = 0;
+				if(buff.isZero())
+					this.polynoms.remove(i);
+				else
+					this.polynoms.set(i, buff);
+				//i--;
+				if(!f)
+					f = true;
 			}
 			i++;
+			System.out.println(i + "/" + this.polynoms.size());
 		} while(i < this.polynoms.size());
+		//copyBasis();
+		return f;
 	}
 	
 	private void sPolynom()
@@ -151,10 +213,11 @@ public class Basis
 			}
 	}
 	
-	private void sPolynom2()
+	/*private boolean sPolynom2()
 	{
-		boolean f;
-		Integer i = 0,j = 0;
+		boolean f,res = false;
+		Integer i = 0,j = 0,n = this.polynoms.size();
+		BigPolinom buff;
 		do
 		{
 			do
@@ -163,21 +226,47 @@ public class Basis
 				{
 					if(!this.polynoms.get(i).getHighMonom().gcd(this.polynoms.get(j).getHighMonom()).isConst())
 					{
-						f = this.polynoms.get(i).sPolynom2( this.polynoms.get(j) ).reduce(this.polynoms);
-						linked.add("");
-						if(f)
+						buff = this.polynoms.get(i).sPolynom( this.polynoms.get(j) );
+						//f = buff.reduce(this.polynoms);
+						if(!buff.isZero())
 						{
-							//System.out.println(this.polynoms.get(i).sPolynom2( this.polynoms.get(j) ).reduce2(this.polynoms));
-							i = 0;
-							j=-1;
+							this.polynoms.add(buff);
+							linked.add("");
+							res = true;
 						}
 					}
 				}
 				j++;
-			} while(j < this.polynoms.size());
+			} while(j < n);
 			i++;
 			j = 0;
-		} while(i < this.polynoms.size());
+			System.out.println("SPoly: " + i + " : " + j);
+		} while(i < n);
+		return res;
+	}*/
+	
+	private boolean sPolynom3()
+	{
+		boolean f = false, temp;
+		Integer i,j;
+		System.out.println("size : " + this.basePolynoms.size());
+		for(i = 0; i < this.basePolynoms.size(); i++)
+			for(j = i+1; j < this.basePolynoms.size(); j++)
+			{
+				//System.out.println(this.isLinked(i,j));
+				//if(!this.isLinked(i,j) && !this.basePolynoms.get(i).getHighMonom().gcd(this.basePolynoms.get(j).getHighMonom()).isConst())
+				if(!this.polynoms.get(i).getHighMonom().gcd(this.polynoms.get(j).getHighMonom()).isConst())
+				{
+					temp = this.polynoms.get(i).sPolynom2( this.polynoms.get(j) ).reduce(this.polynoms);
+					if(temp)
+						linked.add("");
+					if(!f)
+						f = temp;
+					System.out.println("SPoly: " + i + " : " + j + "\n" + this.polynoms.get(this.polynoms.size()-1) + "\n");
+				}
+			}
+		//copyBasis();
+		return f;
 	}
 	
 	private boolean isLinked(Integer ths, Integer other)		//Проверка на связку
@@ -200,12 +289,12 @@ public class Basis
 	private void copyBasis()
 	{
 		int i;
-		while(polynoms.size() > buffpolynoms.size())
-			buffpolynoms.add(new BigPolinom(maxpower, "0"));
-		while(buffpolynoms.size() > polynoms.size())
-			buffpolynoms.remove(buffpolynoms.size()-1);
+		while(polynoms.size() > basePolynoms.size())
+			basePolynoms.add(new BigPolinom(maxpower, "0"));
+		while(basePolynoms.size() > polynoms.size())
+			basePolynoms.remove(basePolynoms.size()-1);
 		for(i = 0; i < polynoms.size(); i++)
-			buffpolynoms.set(i, polynoms.get(i));
+			basePolynoms.set(i, polynoms.get(i));
 	}
 }
 
@@ -239,7 +328,7 @@ public class Basis
 	
 	x^3yz-xy+x-z
 	xy-y^2+z
-	y^3-z 
+	y^3-z
 
 	2
 	-6x1^2+6x1-6x2^2+6x2-2

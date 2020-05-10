@@ -27,10 +27,16 @@ public class Colloquium
 
 		1*x2^3 - 1*x3
 		
+		
+		x1^2-x1-x2x3
+		x1x3-x2^2-x2
 		*/
-		BigPolinom test = new BigPolinom(3, "x1x2-x3^2-x3");
-		BigPolinom test2 = new BigPolinom(3, "x1^2-x1-x2x3");
-		//System.out.println(test.getHighMonom().isDivided(test2.getHighMonom()));
+		/*BigPolinom test = new BigPolinom(3, "x1^2-x1-x2x3");
+		BigPolinom test2 = new BigPolinom(3, "x1x3-x2^2-x2");
+		System.out.println(test.sPolynom(test2));
+		System.out.println(test.sPolynom2(test2));
+		System.out.println(test.getHighMonom().gcd(test2.getHighMonom()));*/
+		
 		
 		System.out.println("\nВведите кол-во незвестных");
 		String buffS;
@@ -62,12 +68,5 @@ public class Colloquium
 		} while(!buffS.equals(""));
 		
 		base.doActions();
-		
-		System.out.println(test.mod(base.polynoms.get(0)));
-		System.out.println(test.mod(base.polynoms.get(1)));
-		System.out.println(test.mod(base.polynoms.get(2)));
-		System.out.println(test.mod(base.polynoms.get(3)));
-		System.out.println(test.mod(base.polynoms.get(4)));
-		System.out.println(test.mod(base.polynoms.get(5)));
 	}
 }

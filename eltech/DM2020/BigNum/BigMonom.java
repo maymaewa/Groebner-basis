@@ -197,7 +197,6 @@ public class BigMonom
 		result.coef = result.coef.multiply(buffOther.coef);
 		for(i = 0; i < result.powers.size(); i++)
 			result.powers.set(i, result.powers.get(i) + buffOther.powers.get(i) );
-		//System.out.println("DBG: " + result);
         return result;
 	}
 	
@@ -232,7 +231,7 @@ public class BigMonom
 	{
 		int i;
 		BigMonom result = this.clone();
-		result.setCoef( other.getCoef().divide(result.getCoef()).reduce() );		//Коэффициент монома = частное от коэффициента other на коэффициент result
+		result.setCoef( other.getCoef().divide(result.getCoef()) );		//Коэффициент монома = частное от коэффициента other на коэффициент result
 		for(i = 0; i < result.powers.size(); i++)
 			if(result.powers.get(i) <= other.powers.get(i))		//Если в result какая-то степень меньше степени в other, то запишем разницу степеней other-result
 				result.powers.set(i, other.powers.get(i) - result.powers.get(i));
@@ -263,18 +262,7 @@ public class BigMonom
 	}
 	
 	//if(other.powers.get(i) > this.powers.get(i) || (this.powers.get(i) == 0 && other.powers.get(i) != 0) || (other.powers.get(i) == 0 && this.powers.get(i) != 0))
-	
-	/*public String getHighPower()
-	{
-		int i;
-		String result = "0";
-		for(i = 0; i < this.powers.size() && result.equals("0"); i++)
-		{
-			if(this.powers.get(i) != 0)
-				result = "x"+(i+1)+"^"+this.powers.get(i).toString();
-		}
-		return result;
-	}*/
+
 	/**
     * НОД
 	*
@@ -301,6 +289,14 @@ public class BigMonom
 			if(buffOther.powers.get(i) <= buffThis.powers.get(i))
 				result.powers.set(i, Math.min(buffThis.powers.get(i), buffOther.powers.get(i)));
 		}
+		return result;
+	}
+	
+	public BigPolinom toBigPolinom()
+	{
+		BigPolinom result = new BigPolinom(this.powers.size(), "1");
+		result.getFactors().add(this.clone());
+		result.getFactors().remove(0);
 		return result;
 	}
 	
