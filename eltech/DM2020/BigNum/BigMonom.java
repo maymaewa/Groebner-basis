@@ -275,6 +275,43 @@ public class BigMonom
 		}
 		return result;
 	}*/
+	/**
+    * НОД
+	*
+    * @return result - НОД
+    *
+    * @version 1
+    * @author 
+    */
+	public BigMonom gcd(BigMonom other)
+	{
+		int i;
+		BigMonom buffThis = this.clone();
+        BigMonom buffOther = other.clone();
+		BigMonom buff;
+		BigMonom result = new BigMonom(this.powers.size(), "1");
+		if(buffThis.isLessThan(buffOther))
+		{
+			buff = buffOther;
+			buffOther = buffThis;
+			buffThis = buff;
+		}
+		for(i = 0; i < buffThis.powers.size(); i++)
+		{
+			if(buffOther.powers.get(i) <= buffThis.powers.get(i))
+				result.powers.set(i, Math.min(buffThis.powers.get(i), buffOther.powers.get(i)));
+		}
+		return result;
+	}
+	
+	public boolean isConst()
+	{
+		int i;
+		for(i = 0; i < this.powers.size(); i++)
+			if(this.powers.get(i) != 0)
+				return false;
+		return true;
+	}
 	
 	public ArrayList<Integer> getPowers()
 	{

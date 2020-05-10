@@ -19,11 +19,19 @@ public class Colloquium
 	
 	public static void start()
 	{
-		/*BigPolinom test = new BigPolinom(1, "x1^6-4x1^5+2x1^4+5x1^3+2x1^2-4x1-8");
-		BigPolinom test2 = new BigPolinom(1, "x1^5-x1^4-x1^3+x1^2-4x1-4");
-		System.out.println(test.gcd(test2));
-		System.out.println(test.lcm(test2));
-		System.out.println(test.multiply(test2));*/
+		/*
+		
+		1*x1^6*x3 + 1*x1 - 1/3*x2^2 - 2/3*x3
+
+		1*x1*x2 - 1/3*x2^2 + 1/3*x3
+
+		1*x2^3 - 1*x3
+		
+		*/
+		BigPolinom test = new BigPolinom(3, "x1x2-x3^2-x3");
+		BigPolinom test2 = new BigPolinom(3, "x1^2-x1-x2x3");
+		//System.out.println(test.getHighMonom().isDivided(test2.getHighMonom()));
+		
 		System.out.println("\nВведите кол-во незвестных");
 		String buffS;
 		int amount,i;
@@ -42,9 +50,24 @@ public class Colloquium
 			System.out.print("\nВведите полином: ");
 			buffS = in.nextLine();
 			if(!buffS.equals(""))
+			{
+				if(amount < 4)
+				{
+					buffS = buffS.replace("x", "x1");
+					buffS = buffS.replace("y", "x2");
+					buffS = buffS.replace("z", "x3");
+				}
 				base.addBasis(buffS);
+			}
 		} while(!buffS.equals(""));
 		
 		base.doActions();
+		
+		System.out.println(test.mod(base.polynoms.get(0)));
+		System.out.println(test.mod(base.polynoms.get(1)));
+		System.out.println(test.mod(base.polynoms.get(2)));
+		System.out.println(test.mod(base.polynoms.get(3)));
+		System.out.println(test.mod(base.polynoms.get(4)));
+		System.out.println(test.mod(base.polynoms.get(5)));
 	}
 }
