@@ -31,11 +31,9 @@ public class Colloquium
 		x1^2-x1-x2x3
 		x1x3-x2^2-x2
 		*/
-		/*BigPolinom test = new BigPolinom(3, "x1^2-x1-x2x3");
-		BigPolinom test2 = new BigPolinom(3, "x1x3-x2^2-x2");
-		System.out.println(test.sPolynom(test2));
-		System.out.println(test.sPolynom2(test2));
-		System.out.println(test.getHighMonom().gcd(test2.getHighMonom()));*/
+		BigPolinom test = new BigPolinom(3, "2x1^4x2x3^2");
+		BigPolinom test2 = new BigPolinom(3, "3x1^3x2^5");
+		System.out.println(test.lcm(test2));
 		
 		
 		System.out.println("\nВведите кол-во незвестных");

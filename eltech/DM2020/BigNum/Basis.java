@@ -40,6 +40,13 @@ public class Basis
 	{
 		int i;
 		String buffS;
+		BigPolinom buff;
+		for(i = 0; i < this.polynoms.size(); i++)
+		{
+			buff = this.polynoms.get(i);
+			buff.divideByHighCoef();
+			this.polynoms.set(i, buff);
+		}
 		System.out.println("Размер базиса: " + this.polynoms.size());
 		for(i = 0; i < this.polynoms.size(); i++)
 		{
@@ -81,10 +88,13 @@ public class Basis
 			//removeDivided();
 			f = simple3();
 			if(!f)
-				f = sPolynom3();
+				f = sPolynom2();
 			else
-				sPolynom3();
-			//removeEquals();//equals
+			{
+				//while(simple3());
+				sPolynom2();
+			}
+			removeEquals();//equals
 			System.out.println(f);
 		}
 		removeEquals();
@@ -171,13 +181,6 @@ public class Basis
 		boolean f = false;
 		BigPolinom buff;
 		int i = 0;
-		for(i = 0; i < this.polynoms.size(); i++)
-		{
-			buff = this.polynoms.get(i);
-			buff.divideByHighCoef();
-			this.polynoms.set(i, buff);
-		}
-		i = 0;
 		do				//Упрощаем базисы
 		{
 			buff = this.polynoms.get(i).reduce22(this.polynoms);	//reduce2
@@ -188,13 +191,19 @@ public class Basis
 				else
 					this.polynoms.set(i, buff);
 				//i--;
-				if(!f)
+				if(!f && !buff.isZero())
 					f = true;
 			}
 			i++;
 			System.out.println(i + "/" + this.polynoms.size());
 		} while(i < this.polynoms.size());
-		//copyBasis();
+		/*for(i = 0; i < this.polynoms.size(); i++)
+		{
+			buff = this.polynoms.get(i);
+			buff.divideByHighCoef();
+			this.polynoms.set(i, buff);
+		}*/
+		copyBasis();
 		return f;
 	}
 	
@@ -213,37 +222,34 @@ public class Basis
 			}
 	}
 	
-	/*private boolean sPolynom2()
+	private boolean sPolynom2()
 	{
-		boolean f,res = false;
-		Integer i = 0,j = 0,n = this.polynoms.size();
+		boolean f = false, temp;
+		Integer i,j;
 		BigPolinom buff;
-		do
-		{
-			do
+		System.out.println("size : " + this.basePolynoms.size());
+		for(i = 0; i < this.basePolynoms.size(); i++)
+			for(j = this.basePolynoms.size()-1; j >= 0; j--)
 			{
-				if(i != j && !this.isLinked(i,j))
+				temp = false;
+				if(i != j && !this.polynoms.get(i).getHighMonom().gcd(this.polynoms.get(j).getHighMonom()).isConst())
 				{
-					if(!this.polynoms.get(i).getHighMonom().gcd(this.polynoms.get(j).getHighMonom()).isConst())
-					{
-						buff = this.polynoms.get(i).sPolynom( this.polynoms.get(j) );
-						//f = buff.reduce(this.polynoms);
-						if(!buff.isZero())
-						{
-							this.polynoms.add(buff);
-							linked.add("");
-							res = true;
-						}
-					}
+					buff = this.polynoms.get(i).sPolynom2( this.polynoms.get(j) );
+					if(!buff.isZero() && !isReducedToZero(buff))
+						temp = buff.reduce(this.polynoms);
+					if(!this.isLinked(i,j))
+						addLink(i,j);
+					if(temp)
+						linked.add("");
+					if(!f)
+						f = temp;
+					System.out.println("SPoly: " + i + " : " + j + " size:" + this.polynoms.size());
 				}
-				j++;
-			} while(j < n);
-			i++;
-			j = 0;
-			System.out.println("SPoly: " + i + " : " + j);
-		} while(i < n);
-		return res;
-	}*/
+			}
+		copyBasis();
+		newLinkList();
+		return f;
+	}
 	
 	private boolean sPolynom3()
 	{
@@ -262,10 +268,11 @@ public class Basis
 						linked.add("");
 					if(!f)
 						f = temp;
-					System.out.println("SPoly: " + i + " : " + j + "\n" + this.polynoms.get(this.polynoms.size()-1) + "\n");
+					System.out.println("SPoly: " + i + " : " + j);// + "\n" + this.polynoms.get(this.polynoms.size()-1) + "\n");
 				}
 			}
-		//copyBasis();
+		copyBasis();
+		newLinkList();
 		return f;
 	}
 	
@@ -275,15 +282,19 @@ public class Basis
 		String buffLink = linked.get(ths);
 		//System.out.println(buffS + " : " + buffLink);
 		if(buffLink.indexOf(buffS) == -1)
-		{
-			if(buffLink.equals(""))
-				buffLink = buffS;
-			else
-				buffLink += "," + buffS;
-			linked.set(ths, buffLink);
 			return false;
-		}
 		return true;
+	}
+	
+	private void addLink(Integer ths, Integer other)
+	{
+		String buffS = "," + other.toString();
+		String buffLink = linked.get(ths);
+		if(buffLink.equals(""))
+			buffLink = buffS;
+		else
+			buffLink += "," + buffS;
+		linked.set(ths, buffLink);
 	}
 	
 	private void copyBasis()
@@ -294,7 +305,29 @@ public class Basis
 		while(basePolynoms.size() > polynoms.size())
 			basePolynoms.remove(basePolynoms.size()-1);
 		for(i = 0; i < polynoms.size(); i++)
-			basePolynoms.set(i, polynoms.get(i));
+			basePolynoms.set(i, polynoms.get(i).clone());
+	}
+	
+	public boolean isReducedToZero(BigPolinom ths)
+	{
+		boolean f;
+		int i,j;
+		BigMonom buff = ths.getHighMonom();
+		for(i = 0; i < this.polynoms.size(); i++)
+			for(j = 0; j < this.polynoms.size(); j++)
+				if(i != j)
+					if(polynoms.get(i).getHighMonom().lcm(polynoms.get(j).getHighMonom()).isDivided(buff) && isLinked(i,j))
+						return true;
+		return false;
+	}
+	
+	public void newLinkList()
+	{
+		int i;
+		while(linked.size() > 0)
+			linked.remove(0);
+		for(i = 0; i < polynoms.size(); i++)
+			linked.add("");
 	}
 }
 

@@ -292,6 +292,17 @@ public class BigMonom
 		return result;
 	}
 	
+	public BigMonom lcm(BigMonom other)
+	{
+		int i;
+		BigMonom buffThis = this.clone();
+		BigMonom buffOther = other.clone();
+		BigMonom result = new BigMonom(this.powers.size(), "1");
+		for(i = 0; i < this.powers.size(); i++)
+			result.powers.set(i, Math.max(this.powers.get(i), other.powers.get(i)));
+		return result;
+	}
+	
 	public BigPolinom toBigPolinom()
 	{
 		BigPolinom result = new BigPolinom(this.powers.size(), "1");

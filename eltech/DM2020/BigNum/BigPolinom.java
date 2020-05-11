@@ -624,15 +624,15 @@ public class BigPolinom
 				buffThis.sort();
 				/*if(!buffThis.isZero())
 					buffThis.divideByHighCoef();*/
+				if(!buffThis.isZero())	//убрать?
+					buffThis.reduceCoefs();
 				System.out.print("T");
 				//System.out.println("\nbuffThis:" + buffThis);
 			}
 		} while(!buffThis.isZero());
 		result.sort();
 		/*if(!result.isZero())
-			result.divideByHighCoef();
-		else
-			System.out.println("!!zero!!");*/
+			result.divideByHighCoef();*/
 		//System.out.println("\nRES:" + result);
 		return result;
 	}
@@ -697,7 +697,10 @@ public class BigPolinom
 				if(basis.get(i).equals2(reduced))
 					f++;
 		if(f == 0 && !reduced.isZero() && !reduced.getHighMonom().isConst())
+		{
+			reduced.divideByHighCoef();	//убрать?
 			basis.add(reduced);
+		}
 		else
 			return false;
 		return true;
@@ -727,6 +730,80 @@ public class BigPolinom
 		{
 			this.factors.get(i).setCoef(this.factors.get(i).getCoef().divide(highCoef).reduce());
 		}
+		//this.simpleMod();	//убрать?
+	}
+	
+	public void gcdAndLcm()
+	{
+		int i;
+		BigQ temp = new BigQ("1/1");
+		BigQ temp2;
+		BigQ minusOne = new BigQ("-1/1");
+		for (i = 0; i < factors.size(); i++)
+		{
+			if(temp.isZero() && !this.factors.get(i).isZero())
+			{
+				temp.getP().setNumber(this.factors.get(i).getCoef().getP().getNumber());
+				temp.getQ().setNumber(this.factors.get(i).getCoef().getQ().getNumber());
+			}
+			else
+			{
+				temp.getP().setNumber(temp.getP().getNumber().gcd(this.factors.get(i).getCoef().getP().getNumber()));
+				temp.getQ().setNumber(temp.getQ().getNumber().lcm(this.factors.get(i).getCoef().getQ().getNumber()));
+				temp = temp.reduce();
+			}
+		}
+		for (i = 0; i < factors.size(); i++)
+		{
+			temp2 = this.factors.get(i).getCoef().divide(temp).reduce();
+			this.factors.get(i).setCoef(temp2.reduce());
+		}
+	}
+	
+	public void simpleMod()
+	{
+		BigZ simple = new BigZ("950077708875374368239634443053301088702579244657195230918021");
+		//BigZ simple = new BigZ("38415949717841326076959565850785329844539400959763");
+		//BigN simple = new BigN("749919681470339");
+		int i;
+		BigQ temp;
+		for(i = 0; i < factors.size(); i++)
+		{
+			temp = this.factors.get(i).getCoef();
+			temp.setP(temp.getP().mod(simple));
+			temp.setQ(temp.getQ().mod(simple));
+			this.factors.get(i).setCoef(temp.reduce());
+		}
+	}
+	
+	private void reduceCoefs()
+	{
+		int i;
+		for(i = 0; i < this.factors.size(); i++)
+			this.factors.get(i).setCoef( this.factors.get(i).getCoef().reduce() );
+		//this.simpleMod();
+	}
+	
+	public boolean onlyOne()
+	{
+		int i,j,required = 0;
+		for(i = 0; i < this.getHighMonom().getPowers().size(); i++)
+		{
+			if(required == 0)
+			{
+				if(this.getHighMonom().getPowers().get(i) > 0)
+					required = this.getHighMonom().getPowers().get(i);
+			}
+			else
+				return false;
+		}
+		for(i = 1; i < this.factors.size(); i++)
+		{
+			for(j = 0; j < this.factors.get(i).getPowers().size(); j++)
+				if(this.factors.get(i).getPowers().get(j) > 0 && j != required)
+					return false;
+		}
+		return true;
 	}
 	
 	public ArrayList<BigMonom> getFactors()
