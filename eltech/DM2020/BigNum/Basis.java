@@ -61,24 +61,6 @@ public class Basis
 		}
 	}
 	
-	public void output2()
-	{
-		int i;
-		String buffS;
-		System.out.println("Размер базиса: " + this.basePolynoms.size());
-		for(i = 0; i < this.basePolynoms.size(); i++)
-		{
-			buffS = this.basePolynoms.get(i).toString();
-			if(maxpower < 4)
-			{
-				buffS = buffS.replace("x1", "x");
-				buffS = buffS.replace("x2", "y");
-				buffS = buffS.replace("x3", "z");
-			}
-			System.out.println(buffS + "\n");
-		}
-	}
-	
 	private void Buhberger()
 	{
 		boolean f = true;
@@ -328,6 +310,38 @@ public class Basis
 			linked.remove(0);
 		for(i = 0; i < polynoms.size(); i++)
 			linked.add("");
+	}
+	
+	public void decision()
+	{
+		BigPolinom buf;
+		BigPolinom end = new BigPolinom(this.polynoms.get(0).getFactors().get(0).getPowers().size(), "1");
+		for(int i=0; i < this.polynoms.size(); i++)
+		{
+			buf = this.basePolynoms.get(i);
+			System.out.print("\nИзначально ");
+			System.out.println(buf);
+			for(int j=0; j < this.polynoms.size(); j++)
+			{
+				if (!buf.divide(this.polynoms.get(j)).isZero())
+				{
+					System.out.print("\nС помощью чего сокращаем: ");
+					System.out.println(this.polynoms.get(j));
+					if(buf.mod(this.polynoms.get(j)).isZero())
+					{
+						break;
+					}
+					buf=buf.mod(this.polynoms.get(j));
+					System.out.print("\nОстаток ");
+					System.out.println(buf);
+				}
+			}
+			System.out.print("\nЧто должны добавить: ");
+			System.out.println(buf);
+			end = end.add(buf);
+			System.out.print("\nКонец ");
+			System.out.println(end);
+		}
 	}
 }
 

@@ -31,9 +31,9 @@ public class Colloquium
 		x1^2-x1-x2x3
 		x1x3-x2^2-x2
 		*/
-		BigPolinom test = new BigPolinom(3, "2x1^4x2x3^2");
-		BigPolinom test2 = new BigPolinom(3, "3x1^3x2^5");
-		System.out.println(test.lcm(test2));
+		/*BigPolinom test = new BigPolinom(3, "0");
+		BigPolinom test2 = new BigPolinom(3, "3511808/6128487*x2^15-1617280/2042829x2^14-6545120/6428487x2^13+306102280/55156383x2^12-175994720/55156383x2^11-1182017594/165469149x2^10+21269039420/1489222341x2^9");
+		System.out.println(test.add(test2));*/
 		
 		
 		System.out.println("\nВведите кол-во незвестных");
@@ -66,5 +66,7 @@ public class Colloquium
 		} while(!buffS.equals(""));
 		
 		base.doActions();
+		
+		//base.decision();
 	}
 }
