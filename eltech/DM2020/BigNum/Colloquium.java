@@ -66,7 +66,8 @@ public class Colloquium
 		} while(!buffS.equals(""));
 		
 		base.doActions();
-		
-		//base.decision();
+		base.decision();
+		System.out.println("Решение:");
+		System.out.print(base.decision);
 	}
 }

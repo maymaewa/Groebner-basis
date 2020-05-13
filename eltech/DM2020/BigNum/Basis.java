@@ -9,6 +9,7 @@ public class Basis
 	private ArrayList<String> linked = new ArrayList<String>();	//Записываем те многочлены, с которыми уже строили S полином
 	private ArrayList<BigPolinom> buffpolynoms = new ArrayList<BigPolinom>();
 	private int maxpower;
+	public BigPolinom decision;
 	
 	public void addBasis(String newPolynom)
 	{
@@ -311,36 +312,29 @@ public class Basis
 		for(i = 0; i < polynoms.size(); i++)
 			linked.add("");
 	}
-	
+
 	public void decision()
 	{
 		BigPolinom buf;
-		BigPolinom end = new BigPolinom(this.polynoms.get(0).getFactors().get(0).getPowers().size(), "1");
+		BigPolinom end = new BigPolinom(this.polynoms.get(0).getFactors().get(0).getPowers().size(), "0");
 		for(int i=0; i < this.polynoms.size(); i++)
 		{
 			buf = this.basePolynoms.get(i);
-			System.out.print("\nИзначально ");
-			System.out.println(buf);
 			for(int j=0; j < this.polynoms.size(); j++)
 			{
 				if (!buf.divide(this.polynoms.get(j)).isZero())
 				{
-					System.out.print("\nС помощью чего сокращаем: ");
-					System.out.println(this.polynoms.get(j));
 					if(buf.mod(this.polynoms.get(j)).isZero())
 					{
 						break;
 					}
 					buf=buf.mod(this.polynoms.get(j));
-					System.out.print("\nОстаток ");
-					System.out.println(buf);
 				}
 			}
-			System.out.print("\nЧто должны добавить: ");
-			System.out.println(buf);
-			end = end.add(buf);
-			System.out.print("\nКонец ");
-			System.out.println(end);
+			if(buf.onlyOne()) {
+				end = end.add(buf);
+			}
+			decision = end.clone();
 		}
 	}
 }

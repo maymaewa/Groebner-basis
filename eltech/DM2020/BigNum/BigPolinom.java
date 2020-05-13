@@ -783,16 +783,16 @@ public class BigPolinom
 			this.factors.get(i).setCoef( this.factors.get(i).getCoef().reduce() );
 		//this.simpleMod();
 	}
-	
+
 	public boolean onlyOne()
 	{
-		int i,j,required = 0;
-		for(i = 0; i < this.getHighMonom().getPowers().size(); i++)
+		int i,j,required = -1;
+		for(i = 0; i < this.getHighMonom().getPowers().size() && required == -1; i++)
 		{
-			if(required == 0)
+			if(required == -1)
 			{
 				if(this.getHighMonom().getPowers().get(i) > 0)
-					required = this.getHighMonom().getPowers().get(i);
+					required = i;
 			}
 			else
 				return false;
@@ -805,6 +805,7 @@ public class BigPolinom
 		}
 		return true;
 	}
+
 	
 	public ArrayList<BigMonom> getFactors()
 	{
